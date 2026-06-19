@@ -1,95 +1,259 @@
 ---
 /**
- * Dependencias: Tailwind CSS v4 and use please kebab-case for ids and camelCase for const and var
- * Congrats on your new position and role! :D
+ * FOOTER — IEEE ICESI
+ * Footer completo: marca, navegación, recursos IEEE, contacto, redes y créditos.
+ * Reutiliza datos de data/ (navLinks, socialLinks, ieeeResources).
+ * Fondo oscuro fijo (convención de footers, cierra la página).
  * By: Majumashe - WebMaster 2026
  */
+
+import { chapters } from "../data/chapters";
+import { socialLinks } from "../data/social";
+import { ieeeResources } from "../data/resources";
 import logoWhite from "../assets/brand/logoWhite.svg";
+
+// Íconos de redes (mapa: nombre → archivo SVG)
+import instagramIcon from "../assets/icons/redes/instagram.svg";
+import facebookIcon from "../assets/icons/redes/facebook.svg";
+import linkedinIcon from "../assets/icons/redes/linkedin.svg";
+import spotifyIcon from "../assets/icons/redes/spotify.svg";
+import discordIcon from "../assets/icons/redes/discord.svg";
+
+// Mapea cada 'icon' del data a su archivo importado
+const socialIcons = {
+  instagram: instagramIcon,
+  facebook: facebookIcon,
+  linkedin: linkedinIcon,
+  spotify: spotifyIcon,
+  discord: discordIcon,
+};
+
+// Año dinámico: nunca hay que actualizarlo a mano
+const currentYear = new Date().getFullYear();
+
+const contactEmail = "ieee@icesi.edu.co"; // placeholder, ajusta al real
+const portfolioUrl = "https://www.linkedin.com/in/maria-juliana-marin-shek/";
 ---
 
-<footer class="bg-teal text-white max-w-screen-xl mx-auto pt-10">
-    <div class="px-4 sm:px-6 lg:px-12">
-        <!-- Brand -->
-        <a href="/" class="flex items-center   ">
-            <img
-                src={logoWhite.src}
-                alt="IEEE ICESI Student Branch white"
-                decoding="async"
-                loading="lazy"
-                class="h-15 w-auto"
-            />
-            <!-- sr-only: solo visible para lectores de pantalla -->
-            <span class="sr-only">Ir al inicio</span>
+<footer class="footer-themed">
+  <div class="h-[3px] bg-gradient-to-r from-ieee-blue via-icesi-blue to-teal"></div>
+
+  <div class="mx-auto max-w-screen-xl px-6 py-12">
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.2fr]">
+      <!-- Columna 1: marca + redes -->
+      <div>
+        <a href="/" class="mb-5 inline-flex items-center gap-2">
+          <img
+            src={logoWhite.src}
+            alt="IEEE ICESI Student Branch"
+            class="h-16 w-auto"
+            decoding="async"
+            loading="lazy"
+          />
         </a>
+        <ul class="flex max-w-xs justify-between">
+          {
+            socialLinks.map((social) => (
+              <li>
+                <a
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  class="footer-social flex h-11 w-11 items-center justify-center rounded-lg"
+                >
+                  <img
+                    src={socialIcons[social.icon].src}
+                    alt=""
+                    class="h-5 w-5"
+                    aria-hidden="true"
+                  />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Columna 2: capítulos (oculta en móvil para no recargar) -->
+      <div class="hidden md:block">
+        <h3 class="mb-4 text-sm font-medium text-white">Capítulos</h3>
+        <ul class="flex flex-col gap-2.5">
+          {
+            chapters.map((chapter) => (
+              <li>
+                <a href={`/chapters/${chapter.slug}`} class="footer-link">
+                  {chapter.fullName}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Columna 3: recursos del ecosistema IEEE (externos) -->
+      <div>
+        <h3 class="mb-4 text-sm font-medium text-white">Recursos IEEE</h3>
+        <ul class="flex flex-col gap-2.5">
+          {
+            ieeeResources.map((resource) => (
+              <li>
+                <a
+                  href={resource.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="footer-link"
+                >
+                  {resource.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Columna 4: contacto -->
+      <div>
+        <h3 class="mb-4 text-sm font-medium text-white">Contacto</h3>
+        <ul class="flex flex-col gap-3">
+          <li>
+            <a href={`mailto:${contactEmail}`} class="footer-link flex items-center gap-2">
+              <svg
+                class="h-4 w-4 text-icesi-blue"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3 8l9 6 9-6M3 8v8a2 2 0 002 2h14a2 2 0 002-2V8M3 8l9-5 9 5"></path>
+              </svg>
+              {contactEmail}
+            </a>
+          </li>
+          <li class="flex items-center gap-2 text-sm text-cool-grey">
+            <svg
+              class="h-4 w-4 text-icesi-blue"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              ></path>
+              <circle cx="12" cy="11" r="3"></circle>
+            </svg>
+            Universidad ICESI, Cali
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Links -->
-    <div class="flex flex-row px-4 sm:px-6 lg:px-12  justify-between" >
-        <!--Redes y Conctacto -->
+    <!-- Zona de créditos -->
+    <div
+      class="mt-10 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 sm:flex-row"
+    >
+      <p class="text-xs text-slate-blue">
+        © {currentYear} IEEE ICESI Student Branch. Todos los derechos reservados.
+      </p>
 
-        <div>
-            <!--Toca poner los redireccionamientos apenas los tenga -->
-            <div class="flex flex-wrap gap-4 p-4">
-                <a href="">Facebook</a>
-                <a href="">Instagram</a>
-                <a href="">Linkedin</a>
-                <a href="">Discord</a>
-            </div>
-
-            <div class="p-4">
-                <h3 class="font-bold flex-column pb-5">Contacto</h3>
-
-                <p>Correo@correo.com</p>
-                <p>numero fijo</p>
-                <p class="pb-3 border-b border-white/60">+57 300 000 0000</p>
-            </div>
-        </div>
-
-        <!-- Quick links - Noticias - Recursos -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-4 gap-10  ">
-            <!-- Quick links -->
-            <div>
-                <h3 class="font-semibold">Enlaces rápidos</h3>
-                <ul>
-                    <li><a href="">Sobre nosotros</a></li>
-                    <li><a href="">Junta directiva</a></li>
-                    <li><a href="">Capitulos & Grupos</a></li>
-                    <li><a href="">Únete a IEEE</a></li>
-                    <li><a href="">Contáctanos</a></li>
-                </ul>
-                
-            </div>
-            <!--Noticias -->
-
-            <div>
-                <h3 class="font-semibold">Noticias</h3>
-                <ul>
-                    <li><a href="">Blog</a></li>
-                    <li><a href="">FAQ</a></li>
-                    <li><a href="">Galería</a></li>
-                    <li><a href="">Voluntariado</a></li>
-                    <li><a href="">Noticias</a></li>
-                </ul>
-            </div>
-            <!-- Recursos -->
-            
-            <div>
-                <h3 class="font-semibold">Recursos</h3>
-                <ul>
-                    <li><a href="">IEEE.org</a></li>
-                    <li><a href="">IEEE Membership</a></li>
-                    <li><a href="">IEEE Learning Network</a></li>
-                    <li><a href="">IEEE Standards</a></li>
-                </ul>
-            </div>
-        </div>
-
+      <p class="font-mono text-xs text-teal">
+        // hecho con café y TypeScript por
+        <a
+          href={portfolioUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-signature underline underline-offset-2"
+        >
+          Maria Juliana Marin Shek (@majumashe)
+        </a>
+      </p>
     </div>
 
-    <!-- Creditos -->
-     <div class="bg-gunmetal flex flex-row justify-between px-4 sm:px-6 lg:px-12 py-4" >
-        <p>© 2025 IEEE ICESI Todos los derechos</p>
-        <a href="">Creditos</a>
-     </div>
-
+    <div class="mt-4 flex items-center justify-center gap-2">
+      <svg
+        class="h-3.5 w-3.5 text-slate-blue"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M8 9l3 3-3 3m5 0h3M4 4h16a1 1 0 011 1v14a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z"
+        ></path>
+      </svg>
+      <span class="font-mono text-[11px] text-slate-blue">
+        tip: abre la consola del navegador (F12) — hay un mensaje para ti
+      </span>
+    </div>
+  </div>
 </footer>
+
+<style>
+  /* Footer con fondo oscuro fijo (convención que cierra la página) */
+  .footer-themed {
+    background-color: var(--color-gunmetal);
+  }
+
+  /* Links del footer con hover de marca */
+  .footer-link {
+    font-size: 0.875rem;
+    color: var(--color-cool-grey);
+    transition: color 0.2s ease;
+  }
+  .footer-link:hover {
+    color: white;
+  }
+
+  /* Botones de redes sociales */
+  .footer-social {
+    background-color: rgba(255, 255, 255, 0.08);
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease;
+  }
+  /* Los íconos son <img>, así que los forzamos a blanco con filtro */
+  .footer-social img {
+    filter: brightness(0) invert(0.8);
+    transition: filter 0.2s ease;
+  }
+  .footer-social:hover {
+    background-color: var(--color-ieee-blue);
+    transform: translateY(-2px);
+  }
+  .footer-social:hover img {
+    filter: brightness(0) invert(1);
+  }
+
+  /* Firma del WebMaster */
+  .footer-signature {
+    color: var(--color-icesi-blue);
+    transition: color 0.2s ease;
+  }
+  .footer-signature:hover {
+    color: white;
+  }
+</style>
+
+<script is:inline>
+  // === Easter egg en consola: para devs curiosos que abran DevTools ===
+  console.log("%c¡Holiii, dev curioso!:3", "color: #00629B; font-size: 16px; font-weight: bold;");
+  console.log(
+    "%cEste sitio fue construido desde cero por miiiii, Maria Juliana Marin Shek (@majumashe), WebMaster 2026.",
+    "color: #01A499; font-size: 12px;",
+  );
+  console.log(
+    "%c¿Te gusta lo que ves? Conectemos: https://www.linkedin.com/in/maria-juliana-marin-shek/",
+    "color: #737A87; font-size: 12px;",
+  );
+</script>
