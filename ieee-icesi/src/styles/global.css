@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @theme {
-  
   /* Brand Colors (Primarios)  */
   --color-ieee-blue: #00629b;
   --color-gunmetal: #0e1113;
@@ -23,12 +22,13 @@
 
   /* Tipografía */
   --font-formata: "Formata", system-ui, sans-serif;
-  
 }
-
 
 /* === MODO CLARO (por defecto) === */
 :root {
+  --hero-bg: #f7f9fc; /* off-white */
+  --hero-text: #212121; /* title-black */
+  --hero-text-muted: #737a87; /* slate-blue */
   --nav-bg: #ffffff;
   --nav-text: #5f5e5a; /* links inactivos */
   --nav-text-active: #00629b; /* link activo + logo */
@@ -41,6 +41,9 @@
 /* === MODO OSCURO === */
 /* Se activa cuando <html data-theme="dark"> */
 [data-theme="dark"] {
+  --hero-bg: #0e1113; /* gunmetal */
+  --hero-text: #f7f9fc; /* off-white */
+  --hero-text-muted: #c4ccd6; /* cool-grey */
   --nav-bg: #0e1113; /* gunmetal */
   --nav-text: #c4ccd6; /* cool-grey */
   --nav-text-active: #4da3db; /* azul brillante para contraste */
@@ -49,7 +52,6 @@
   --nav-cta-text: #ffffff;
   --nav-toggle-icon: #c4ccd6;
 }
-
 
 @keyframes ticker {
   0% {

@@ -5,62 +5,62 @@
  */
 
 interface Logo {
-    src: string;
-    alt: string;
+  src: string;
+  alt: string;
 }
 
 interface Props {
-    logos: Logo[];
+  logos: Logo[];
 }
 
 const { logos } = Astro.props;
 ---
 
 <div class="slider-container">
-    <div class="slider-track">
-        {logos.map((logo) => (
-            <img src={logo.src} alt={logo.alt} class="slider-logo" />
-        ))}
-        {logos.map((logo) => (
-            <img src={logo.src} alt={logo.alt} class="slider-logo" aria-hidden="true" />
-        ))}
-    </div>
+  <div class="slider-track">
+    {logos.map((logo) => <img src={logo.src} alt={logo.alt} class="slider-logo" />)}
+    {
+      logos.map((logo) => (
+        <img src={logo.src} alt={logo.alt} class="slider-logo" aria-hidden="true" />
+      ))
+    }
+  </div>
 </div>
 
 <style>
-    .slider-container {
-        overflow: hidden;
-        padding: 2rem 0;
-        background: white;
+  .slider-container {
+    overflow: hidden;
+    padding: 2rem 0;
+    background: white;
+  }
+
+  .slider-track {
+    display: flex;
+    width: max-content;
+    animation: scroll 20s linear infinite;
+  }
+
+  .slider-track:hover {
+    animation-play-state: paused;
+  }
+
+  .slider-logo {
+    height: 50px;
+    width: auto;
+    margin: 0 2rem;
+    opacity: 0.7;
+  }
+
+  .slider-logo:hover {
+    opacity: 1;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
     }
-    
-    .slider-track {
-        display: flex;
-        width: max-content;
-        animation: scroll 20s linear infinite;
+    100% {
+      transform: translateX(-50%);
     }
-    
-    .slider-track:hover {
-        animation-play-state: paused;
-    }
-    
-    .slider-logo {
-        height: 50px;
-        width: auto;
-        margin: 0 2rem;
-        opacity: 0.7;
-    }
-    
-    .slider-logo:hover {
-        opacity: 1;
-    }
-    
-    @keyframes scroll {
-        0% {
-            transform: translateX(0);
-        }
-        100% {
-            transform: translateX(-50%);
-        }
-    }
+  }
 </style>

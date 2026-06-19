@@ -29,7 +29,7 @@ const {
 const baseClasses =
   "btn-base inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-medium focus:outline-none focus-visible:ring-4";
 
-// Estilos por variante 
+// Estilos por variante
 const variantClasses = {
   primary:
     "border-2 border-ieee-blue bg-ieee-blue text-white hover:bg-icesi-blue focus-visible:ring-ieee-blue/50",
@@ -57,7 +57,7 @@ const isLink = href !== undefined;
   )
 }
 
-<style>
+<style is:global>
   /* === Animación B: relieve (todas las variantes) === */
   .btn-base {
     cursor: pointer;
@@ -92,6 +92,7 @@ const isLink = href !== undefined;
   .btn-hero {
     position: relative;
     overflow: hidden;
+    isolation: isolate;
   }
   .btn-hero::before {
     content: "";
@@ -103,16 +104,22 @@ const isLink = href !== undefined;
     background: linear-gradient(
       120deg,
       transparent,
-      rgba(255, 255, 255, 0.35),
+      rgba(255, 255, 255, 0.4),
       transparent
     );
     transition: left 0.55s ease;
+    z-index: 1;
   }
   .btn-hero:hover::before {
     left: 130%;
   }
   .btn-hero:active {
     transform: translateY(0) scale(0.98);
+  }
+  /* El contenido (texto) por encima del brillo */
+  .btn-hero > :global(*) {
+    position: relative;
+    z-index: 2;
   }
 
   /* === Accesibilidad: respeta a quien pide menos movimiento === */
