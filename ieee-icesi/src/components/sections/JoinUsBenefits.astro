@@ -1,0 +1,66 @@
+---
+/**
+ * TODO: Revisar de nuevo
+ * Componente: Beneficios de unirse a IEEE
+ * By: Majumashe - WebMaster 2026
+ * 
+ * Muestra el texto explicativo y grid de 6 beneficios con iconos
+ */
+
+// Logo IEEE
+import ieeeBlue from "../../assets/brand/ieeeBlue.svg";
+
+// Iconos de beneficios
+import iconWorld from "../../assets/icons/join/world.svg";
+import iconChip from "../../assets/icons/join/chip.svg";
+import iconPopcorn from "../../assets/icons/join/popcorn.svg";
+import iconArrowup from "../../assets/icons/join/arrowup.svg";
+import iconPaper from "../../assets/icons/join/paper.svg";
+import iconPrize from "../../assets/icons/join/prize.svg";
+
+const benefits = [
+    { icon: iconWorld.src, title: "Networking global" },
+    { icon: iconChip.src, title: "Proyectos reales" },
+    { icon: iconPopcorn.src, title: "Comunidad y Recreación" },
+    { icon: iconArrowup.src, title: "Trayectoria profesional" },
+    { icon: iconPaper.src, title: "Recursos y aprendizaje" },
+    { icon: iconPrize.src, title: "Hackatones y Competencias" },
+];
+---
+
+<section class="py-16 bg-white">
+    <div class="max-w-screen-xl mx-auto px-4 lg:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            <!-- Columna izquierda: Texto -->
+            <div>
+                <h2 class="text-3xl font-bold text-title-black mb-6 flex items-center gap-3 flex-wrap">
+                    Unirse a 
+                    <img src={ieeeBlue.src} alt="IEEE" class="h-8 inline-block" />
+                    es muy fácil
+                </h2>
+                <div class="space-y-4 text-slate-blue text-base font-normal leading-relaxed">
+                    <p>
+                        Como estudiante de la Universidad Icesi, puedes asistir a la mayoría de nuestros eventos, talleres y charlas sin costo. (Solo debes inscribirte previamente para garantizar tu cupo).
+                    </p>
+                    <p>
+                        Si deseas pasar de ser asistente a ser parte de IEEE ICESI, solo inscríbete para iniciar como voluntario y si deseas ser miembro oficial necesitas realizar el pago de la membresía.
+                    </p>
+                    <p>
+                        Puedes hacerlo durante nuestros horarios de oficina o mediante nuestros métodos de pago en línea con la ayuda de nuestros líderes.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Columna derecha: Grid de beneficios -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {benefits.map((benefit) => (
+                    <div class="flex flex-col items-center text-center p-6 rounded-xl bg-off-white border border-cool-grey/20 hover:shadow-md hover:border-ieee-blue/30 transition-all duration-300">
+                        <img src={benefit.icon} alt="" class="w-12 h-12 mb-3" />
+                        <span class="text-sm font-medium text-title-black">{benefit.title}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
+</section>

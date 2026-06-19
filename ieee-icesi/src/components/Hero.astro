@@ -1,0 +1,62 @@
+---
+/**
+ * Dependencias: Tailwind CSS v4 and use please kebab-case for ids and camelCase for const and var:D
+ * Congrats for your new charge!
+ * By: Majumashe - WebMaster 2026
+ */
+const nameBranch = "Rama estudiantil IEEE de la Universidad Icesi";
+import towerIcesi from "../assets/hero/towerIcesi.svg";
+import circuits_exact from "../assets/hero/circuits_exact.svg";
+import bgMint from "../assets/hero/bgMint.svg";
+import Button from "./ui/Button.astro";
+---
+
+<main class="bg-off-white">
+    <section
+        class="px-0 lg:px-8 py-8  mx-auto max-w-screen-xl text-left lg:py-16 lg:px-12 grid grid-cols-1 lg:grid-cols-2 items-center gap-8 relative"
+    >
+        <!--  class="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 relative" -->
+        <!-- Columna 1 con los svg superpuestos-->
+        <div class="relative h-96 hidden lg:block">
+            <img
+                src={circuits_exact.src}
+                alt=""
+                class="absolute inset-0 w-full h-full object-contain z-0 opacity-90"
+            />
+            <!-- Mask para poderle cambiar el color al svg sin cambiarselo al original
+             TO-DO: refactorizar el svg porque en la eliminacion del fondo se malogro-->
+            <div
+                class="absolute inset-0 z-10 w-98 h-100 m-auto bg-gunmetal"
+                style={`
+                    -webkit-mask: url(${towerIcesi.src}) center/contain no-repeat;
+                    mask: url(${towerIcesi.src}) center/contain no-repeat;
+                `}
+            >
+            </div>
+        </div>
+        <div class="px-8 relative">
+            <img src={bgMint.src} alt="background menta" class=" absolute inset-0 w-full h-full object-cover z-0 lg:hidden">
+            <h1
+                class="text-4xl lg:text-5xl font-bold text-title-black leading-tight mb-4"
+            >
+                Conecta tu talento con el mundo de la ingeniería.
+            </h1>
+            <p>
+                Somos la {nameBranch}. Creamos espacios donde la tecnología, el
+                liderazgo y la innovación se convierten en <span
+                    class="font-semibold"
+                    >experiencia real, comunidad y proyección profesional.</span
+                >
+            </p>
+            <!-- lg:flex-row  lg:items-center-->
+            <div
+                class="flex flex-col justify-center items-stretch gap-4 items-center py-6"
+            >
+                <Button href="/join-us" variant="primary">Ser miembro </Button>
+                <Button href="/sponsor" variant="outline"
+                    >Ser patrocinador</Button
+                >
+            </div>
+        </div>
+    </section>
+</main>

@@ -1,0 +1,137 @@
+---
+/**
+ * TODO: Revisar de nuevo
+ * Componente: Tipos de membresía IEEE
+ * By: Majumashe - WebMaster 2026
+ * 
+ * Muestra: Voluntario IEEE vs Miembro IEEE + sección de beneficios
+ */
+
+// Logo IEEE
+import ieeeBlue from "../../assets/brand/ieeeBlue.svg";
+
+// Imagen camiseta
+import tshirtImage from "../../assets/images/tshirt.png";
+
+// Imagen grupo
+import community from "../../../public/carousel/foto2.jpg" 
+
+const volunteerBenefits = [
+    "Participa en comités (Comunicaciones, Eventos, Logística, Proyectos, etc.)",
+    "Apoya y organiza actividades y talleres",
+    "Representa a IEEE ICESI en eventos, competencias y congresos",
+    "Puede postularse a la junta directiva de un capítulo",
+    "Obtiene certificaciones oficiales de servicio, liderazgo y participación",
+    "Construye un portafolio profesional sólido (CV, LinkedIn, GitHub)"
+];
+
+const memberBenefits = [
+    "Certificado y número de membresía internacional",
+    "Acceso a recursos globales, bibliotecas digitales y revistas",
+    "Prioridad en talleres, charlas técnicas y eventos especializados",
+    "Oportunidades en becas, concursos, semilleros y viajes académicos",
+    "Derecho a participar en los capítulos técnicos de la universidad",
+    "Posibilidad de reclamar la camiseta oficial del capítulo (si está disponible)",
+    "Camiseta oficial de la rama estudiantil"
+];
+---
+
+<!-- Tipos de miembros -->
+<section class="py-16 bg-white">
+    <div class="max-w-screen-xl mx-auto px-4 lg:px-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            
+            <!-- Imagen del carrusel -->
+            <div class="rounded-xl overflow-hidden h-80 lg:h-full min-h-[400px]">
+                <img 
+                    src={community.src} 
+                    alt="Miembros IEEE ICESI" 
+                    class="w-full h-full object-cover"
+                />
+            </div>
+            
+            <!-- Contenido -->
+            <div>
+                <h2 class="text-2xl font-bold text-title-black mb-8 flex items-center gap-3 flex-wrap">
+                    Tipos de miembros en 
+                    <img src={ieeeBlue.src} alt="IEEE" class="h-7 inline-block" />
+                </h2>
+                
+                <!-- Voluntario -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-title-black mb-3">
+                        Voluntario IEEE
+                    </h3>
+                    <p class="text-slate-blue text-base mb-4 leading-relaxed">
+                        Para convertirte en voluntario debes ser miembro IEEE ICESI activo. El voluntariado es el corazón de la experiencia IEEE.
+                    </p>
+                    <p class="text-base text-title-black font-medium mb-3">Un Voluntario IEEE:</p>
+                    <ul class="space-y-2">
+                        {volunteerBenefits.map((benefit) => (
+                            <li class="text-base text-slate-blue flex items-start gap-3">
+                                <span class="text-ieee-blue font-bold">•</span>
+                                <span>{benefit}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+                
+                <!-- Miembro oficial -->
+                <div>
+                    <div class="flex items-baseline gap-3 mb-3 flex-wrap">
+                        <h3 class="text-xl font-bold text-title-black">
+                            Miembro IEEE
+                        </h3>
+                        <span class="text-base text-slate-blue">$14 USD/año (estudiantes)</span>
+                    </div>
+                    <p class="text-slate-blue text-base mb-4 leading-relaxed">
+                        Al afiliarte te conviertes en miembro oficial de IEEE a nivel mundial. Como Miembro IEEE obtienes:
+                    </p>
+                    <ul class="space-y-2">
+                        {memberBenefits.map((benefit) => (
+                            <li class="text-base text-slate-blue flex items-start gap-3">
+                                <span class="text-ieee-blue font-bold">•</span>
+                                <span>{benefit}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Banner de beneficios con camiseta -->
+<section class="py-12 bg-off-white">
+    <div class="max-w-screen-xl mx-auto px-4 lg:px-12">
+        <div class="relative bg-gradient-to-r from-teal/40 to-icesi-blue rounded-2xl p-8 lg:p-12 overflow-hidden">
+            
+           
+            <div class="relative z-10 flex flex-col lg:flex-row items-center gap-8 lg:gap-12">
+                
+                <!-- Imagen camiseta -->
+                <div class="flex-shrink-0">
+                    <img 
+                        src={tshirtImage.src} 
+                        alt="Camiseta oficial IEEE ICESI" 
+                        class="w-50 h-50 lg:w-98 lg:h-48 object-contain drop-shadow-lg"
+                    />
+                </div>
+                
+                <!-- Contenido -->
+                <div class="text-center lg:text-left">
+                    <h2 class="text-2xl lg:text-3xl font-bold text-white mb-4">
+                        Beneficios miembros
+                    </h2>
+                    <p class="text-white/90 text-base lg:text-lg leading-relaxed max-w-xl">
+                        Como miembro, obtienes acceso a muchísimo más de lo que imaginas.
+                        Aquí tienes solo algunos de los beneficios que recibes...
+                    </p>
+                    <p class="text-white text-lg lg:text-xl font-bold mt-3">
+                        ¡incluida tu camiseta oficial gratuita!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

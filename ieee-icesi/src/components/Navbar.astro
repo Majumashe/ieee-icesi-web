@@ -1,0 +1,275 @@
+---
+/**
+ * NAVBAR — IEEE ICESI
+ * Dependencias: Tailwind CSS v4
+ * Convenciones: kebab-case para ids, camelCase para variables
+ * Theming: usa variables semánticas (--nav-*) definidas en global.css
+ * By: Majumashe - WebMaster 2026
+ */
+
+import { navLinks } from "../data/navigation";
+import logoColor from "../assets/brand/logoColor.svg";
+import logoWhite from "../assets/brand/logoWhite.svg";
+import Button from "./ui/Button.astro";
+import AnnouncementBar from "./AnnouncementBar.astro";
+
+const currentPath = Astro.url.pathname;
+---
+
+<!-- Header principal (sticky) -->
+<header id="main-header" class="sticky top-0 z-50 w-full">
+  <!-- Barra de anuncios con gradiente de marca -->
+  <AnnouncementBar endDate="2026-12-31" />
+
+  <!-- Contenedor del nav: usa --nav-bg (cambia según el tema) -->
+  <nav class="nav-themed w-full" aria-label="Navegación principal">
+    <div class="mx-auto flex max-w-screen-xl flex-wrap items-center justify-between px-6 py-3.5">
+      <!-- Marca / logo -->
+      <a href="/" class="flex items-center gap-2">
+        <img
+          src={logoColor.src}
+          alt="IEEE ICESI Student Branch"
+          class="logo-light h-9"
+          loading="eager"
+          decoding="async"
+        />
+        <img
+          src={logoWhite.src}
+          alt="IEEE ICESI Student Branch"
+          class="logo-dark h-9"
+          loading="eager"
+          decoding="async"
+        />
+        <span class="sr-only">Ir al inicio</span>
+      </a>
+
+      <!-- Botón hamburguesa (solo móvil) -->
+      <button
+        id="menu-toggle"
+        type="button"
+        class="nav-toggle-btn inline-flex h-10 w-10 items-center justify-center rounded-lg p-2 md:hidden"
+        aria-controls="navbar-menu"
+        aria-expanded="false"
+      >
+        <span class="sr-only">Abrir menú principal</span>
+        <svg
+          class="h-6 w-6"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-width="2"
+            d="M5 7h14M5 12h14M5 17h14"></path>
+        </svg>
+      </button>
+
+      <!-- Zona derecha: toggle de tema + CTA (desktop) -->
+      <div class="hidden items-center gap-3 md:order-2 md:flex">
+        <!-- Toggle de tema (la "lunita") -->
+        <button
+          id="theme-toggle"
+          type="button"
+          class="theme-toggle-btn flex h-9 w-9 items-center justify-center rounded-lg transition-colors"
+          title="Cambiar tema"
+        >
+          <span class="sr-only">Cambiar entre modo claro y oscuro</span>
+          <!-- Icono luna (visible en modo claro) -->
+          <svg
+            id="icon-moon"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+          </svg>
+          <!-- Icono sol (visible en modo oscuro, oculto por defecto) -->
+          <svg
+            id="icon-sun"
+            class="hidden h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="4"></circle>
+            <path
+              d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+            ></path>
+          </svg>
+        </button>
+
+        <Button href="/join-us" variant="nav">
+          Únete ya
+          <svg
+            class="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"></path>
+          </svg>
+        </Button>
+      </div>
+
+      <!-- Menú de links -->
+      <div
+        class="hidden w-full items-center justify-between md:order-1 md:flex md:w-auto"
+        id="navbar-menu"
+      >
+        <ul
+          class="nav-menu-mobile mt-4 flex flex-col gap-1 rounded-lg p-4 font-medium md:mt-0 md:flex-row md:gap-2 md:bg-transparent md:p-0"
+        >
+          {
+            navLinks.map((link) => {
+              const isActive = currentPath === link.href;
+              return (
+                <li>
+                  <a
+                    href={link.href}
+                    class:list={["nav-link", { "nav-link--active": isActive }]}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              );
+            })
+          }
+          <!-- CTA móvil -->
+          <li class="md:hidden">
+            <a href="/join-us" class="nav-link">Únete ya</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Línea decorativa con gradiente de marca -->
+    <div class="h-[3px] bg-gradient-to-r from-ieee-blue via-icesi-blue to-teal"></div>
+  </nav>
+</header>
+
+<style>
+  /* Sombra que aparece al hacer scroll */
+  #main-header {
+    transition: box-shadow 0.3s ease;
+  }
+  #main-header.is-scrolled {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  }
+  /* El nav lee variables semánticas: cambian solas según [data-theme] */
+  .nav-themed {
+    background-color: var(--nav-bg);
+    border-bottom: 1px solid var(--nav-border);
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  /* Links de navegación con borde inferior animado */
+  .nav-link {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--nav-text);
+    border-bottom: 3px solid transparent;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--nav-text-active);
+    border-bottom-color: var(--nav-text-active);
+  }
+
+  /* Link de la página activa */
+  .nav-link--active {
+    color: var(--nav-text-active);
+    font-weight: 500;
+    border-bottom-color: var(--nav-text-active);
+  }
+
+  /* En desktop, el padding vertical alinea el borde con el nav */
+  @media (min-width: 768px) {
+    .nav-link {
+      padding-top: 1rem;
+      padding-bottom: 0.8rem;
+    }
+  }
+
+  /* Fondo del menú móvil (solo en móvil) */
+  .nav-menu-mobile {
+    background-color: var(--nav-bg);
+  }
+  @media (min-width: 768px) {
+    .nav-menu-mobile {
+      background-color: transparent;
+    }
+  }
+
+  /* Botones de iconos */
+  .theme-toggle-btn,
+  .nav-toggle-btn {
+    color: var(--nav-toggle-icon);
+  }
+  .theme-toggle-btn:hover,
+  .nav-toggle-btn:hover {
+    color: var(--nav-text-active);
+  }
+</style>
+
+<script>
+  // === Toggle del menú hamburguesa ===
+  const menuToggle = document.getElementById("menu-toggle");
+  const navbarMenu = document.getElementById("navbar-menu");
+
+  if (menuToggle && navbarMenu) {
+    menuToggle.addEventListener("click", () => {
+      const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
+      menuToggle.setAttribute("aria-expanded", String(!isExpanded));
+      navbarMenu.classList.toggle("hidden");
+    });
+  }
+
+  // === Toggle de tema (la "lunita") ===
+  const themeToggle = document.getElementById("theme-toggle");
+  const iconMoon = document.getElementById("icon-moon");
+  const iconSun = document.getElementById("icon-sun");
+
+  // Aplica un tema y guarda la preferencia
+  const applyTheme = (theme: string) => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    // Luna en claro, sol en oscuro
+    iconMoon?.classList.toggle("hidden", theme === "dark");
+    iconSun?.classList.toggle("hidden", theme !== "dark");
+  };
+
+  // Al cargar: respeta lo guardado, o la preferencia del sistema
+  const savedTheme = localStorage.getItem("theme");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(savedTheme ?? (prefersDark ? "dark" : "light"));
+
+  // Al hacer clic: alterna
+  themeToggle?.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme");
+    applyTheme(current === "dark" ? "light" : "dark");
+  });
+
+  // === Sombra del header al hacer scroll ===
+  const mainHeader = document.getElementById("main-header");
+  const onScroll = () => {
+    mainHeader?.classList.toggle("is-scrolled", window.scrollY > 10);
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll(); // estado inicial correcto al cargar
+</script>

@@ -1,0 +1,42 @@
+---
+// ============================================
+// LAYOUT BASE — IEEE ICESI
+// Plantilla que envuelve TODAS las páginas.
+// Define el <html>, <head> y la estructura común una sola vez.
+// Cada página entra por el <slot />.
+// ============================================
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+
+// Props tipadas: cada página define su propio título y descripción (SEO).
+interface Props {
+  title: string;
+  description?: string;
+}
+
+// Valor por defecto para description si la página no la pasa.
+const {
+  title,
+  description = "Rama estudiantil IEEE de la Universidad ICESI.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon (ajusta la ruta a tu archivo real en public/) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- SEO: title y description vienen por props, distintos en cada página -->
+    <title>{title} | IEEE ICESI</title>
+    <meta name="description" content={description} />
+  </head>
+
+  <body>
+    <Navbar />
+    <slot />
+  </body>
+</html>

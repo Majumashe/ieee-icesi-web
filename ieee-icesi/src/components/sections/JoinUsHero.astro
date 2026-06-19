@@ -1,0 +1,190 @@
+---
+/**
+ * TODO: Revisar de nuevo
+ * Componente: Hero de la página Únete
+ * By: Majumashe - WebMaster 2026
+ * 
+ * Props:
+ * - isOpen: boolean - Estado de inscripciones
+ * - nextOpenDate: string - Fecha de próxima apertura
+ * - formUrl: string - URL del formulario de inscripción
+ * - membershipUrl: string - URL de info de membresía
+ * 
+ * Estados:
+ * - Cerrado: Muestra formulario de notificación por email
+ * - Abierto: Muestra botón directo al formulario
+ */
+import Button from "../ui/Button.astro";
+
+interface Props {
+    isOpen: boolean;
+    nextOpenDate: string;
+    formUrl: string;
+    membershipUrl: string;
+}
+
+const { isOpen, nextOpenDate, formUrl, membershipUrl } = Astro.props;
+---
+
+<section class="relative min-h-[80vh] bg-gradient-to-br from-ieee-blue/25 via-teal/15 to-off-white overflow-hidden">
+     
+    <div class="relative z-10 max-w-screen-xl mx-auto px-4 lg:px-12 py-16 lg:py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            
+            <!-- Columna izquierda: Texto principal + Lottie -->
+            <div class="relative py-12 lg:py-16">
+                <!-- Lottie centrado detrás del texto -->
+                <div 
+                    id="lottie-hero"
+                    class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[450px] h-[450px] opacity-25 z-0"
+                    data-src="/lotties/Moving Circle.json"
+                ></div>
+                
+                <!-- Contenido encima del Lottie -->
+                <div class="relative z-10">
+                    <h1 class="text-4xl lg:text-5xl font-bold text-title-black mb-6">
+                        Únete a IEEE ICESI
+                    </h1>
+                    <p class="text-xl lg:text-2xl text-slate-blue mb-8 leading-relaxed">
+                        Conecta, aprende y crece como ingeniera(o) con la red tecnológica más grande del mundo.
+                    </p>
+                    <p class="text-slate-blue mb-6">
+                        ¡Infórmate sobre la membresía y cómo unirte!
+                    </p>
+                    <Button href={membershipUrl} variant="outline">
+                        Membresía
+                    </Button>
+                </div>
+            </div>
+            
+            <!-- Columna derecha: Card de estado -->
+            <div class="flex flex-col gap-4">
+                
+                <!-- Badge de estado -->
+                <div class:list={[
+                    "inline-flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium self-start border",
+                    isOpen 
+                        ? "bg-teal/10 text-teal-surface border-teal/20" 
+                        : "bg-white text-gunmetal border-warning"
+                ]}>
+                    <span class:list={[
+                        "w-2 h-2 rounded-full",
+                        isOpen ? "bg-teal" : "bg-warning"
+                    ]}></span>
+                    {isOpen ? (
+                        <span>Inscripciones abiertas</span>
+                    ) : (
+                        <span>
+                            Inscripciones de la Rama: Cerradas actualmente<br />
+                            Próxima apertura: <strong>{nextOpenDate}</strong>
+                        </span>
+                    )}
+                </div>
+                
+                <!-- Card de formulario -->
+                <div class="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-cool-grey/30">
+                    {isOpen ? (
+                        <!-- ESTADO: INSCRIPCIONES ABIERTAS -->
+                        <div>
+                            <h2 class="text-2xl font-bold text-title-black mb-4">
+                                ¡Inscríbete ahora!
+                            </h2>
+                            <p class="text-slate-blue mb-6">
+                                Las inscripciones están abiertas. Completa el formulario para unirte a IEEE ICESI.
+                            </p>
+                            <a 
+                                href={formUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="block w-full text-center bg-ieee-blue text-white py-3 rounded-lg hover:bg-icesi-dark transition-colors duration-300 font-medium"
+                            >
+                                Ir al formulario de inscripción
+                            </a>
+                        </div>
+                    ) : (
+                        <!-- ESTADO: INSCRIPCIONES CERRADAS -->
+                        <div>
+                            <h2 class="text-2xl font-bold text-title-black mb-2">
+                                Déjanos tus datos
+                            </h2>
+                            <p class="text-slate-blue text-sm mb-6">
+                                Las inscripciones a la Rama abren por temporadas. Déjanos tu información y te avisaremos cuando inicie el próximo ciclo.
+                            </p>
+                            <form id="notify-form" class="space-y-4">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-title-black mb-1">
+                                        Nombre Completo
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="name" 
+                                        name="name"
+                                        placeholder="Tu nombre"
+                                        required
+                                        class="w-full px-4 py-3 border border-cool-grey/40 rounded-lg focus:ring-2 focus:ring-ieee-blue/30 focus:border-ieee-blue outline-none transition-all bg-off-white"
+                                    />
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-title-black mb-1">
+                                        Correo
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        id="email" 
+                                        name="email"
+                                        placeholder="example@correo.com"
+                                        required
+                                        class="w-full px-4 py-3 border border-cool-grey/40 rounded-lg focus:ring-2 focus:ring-ieee-blue/30 focus:border-ieee-blue outline-none transition-all bg-off-white"
+                                    />
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <input 
+                                        type="checkbox" 
+                                        id="consent" 
+                                        name="consent"
+                                        required
+                                        class="mt-1 w-4 h-4 accent-ieee-blue"
+                                    />
+                                    <label for="consent" class="text-xs text-slate-blue">
+                                        Acepto que IEEE ICESI use mi correo para enviarme información sobre próximas inscripciones.
+                                    </label>
+                                </div>
+                                <button 
+                                    type="submit"
+                                    class="w-full bg-ieee-blue text-white py-3 rounded-lg hover:bg-icesi-dark transition-colors duration-300 font-medium"
+                                >
+                                    Notificarme apertura de inscripciones
+                                </button>
+                            </form>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    import lottie from 'lottie-web';
+
+    const lottieContainer = document.getElementById('lottie-hero');
+    
+    if (lottieContainer) {
+        lottie.loadAnimation({
+            container: lottieContainer,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: lottieContainer.dataset.src
+        });
+    }
+
+    // TODO: Conectar con Firebase para guardar emails
+    const form = document.getElementById('notify-form') as HTMLFormElement;
+    
+    form?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('¡Gracias! Te notificaremos cuando abran las inscripciones.');
+        form.reset();
+    });
+</script>

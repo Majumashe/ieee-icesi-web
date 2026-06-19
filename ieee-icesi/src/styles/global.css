@@ -1,0 +1,113 @@
+@import "tailwindcss";
+@theme {
+  
+  /* Brand Colors (Primarios)  */
+  --color-ieee-blue: #00629b;
+  --color-gunmetal: #0e1113;
+  --color-cool-grey: #c4ccd6;
+  --color-off-white: #f7f9fc;
+  --color-title-black: #212121;
+
+  /* Colors (Secundarios) */
+  --color-icesi-blue: #005da4;
+  --color-icesi-dark: #043990;
+  --color-icesi-deep: #0118ab;
+  --color-slate-blue: #737a87;
+  --color-teal: #01a499;
+  --color-teal-surface: #028473;
+
+  /*  Estados (UI Feedback) */
+  --color-error: #f44336;
+  --color-success: #2ecc71;
+  --color-warning: #f4b400;
+
+  /* Tipografía */
+  --font-formata: "Formata", system-ui, sans-serif;
+  
+}
+
+
+/* === MODO CLARO (por defecto) === */
+:root {
+  --nav-bg: #ffffff;
+  --nav-text: #5f5e5a; /* links inactivos */
+  --nav-text-active: #00629b; /* link activo + logo */
+  --nav-border: #e5e7eb;
+  --nav-cta-bg: #00629b;
+  --nav-cta-text: #ffffff;
+  --nav-toggle-icon: #737a87;
+}
+
+/* === MODO OSCURO === */
+/* Se activa cuando <html data-theme="dark"> */
+[data-theme="dark"] {
+  --nav-bg: #0e1113; /* gunmetal */
+  --nav-text: #c4ccd6; /* cool-grey */
+  --nav-text-active: #4da3db; /* azul brillante para contraste */
+  --nav-border: #212121; /* title-black */
+  --nav-cta-bg: #1e7fc4;
+  --nav-cta-text: #ffffff;
+  --nav-toggle-icon: #c4ccd6;
+}
+
+
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@font-face {
+  font-family: "Formata";
+  src: url("/fonts/formata-light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Formata";
+  src: url("/fonts/formata-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Formata";
+  src: url("/fonts/formata-medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Formata";
+  src: url("/fonts/formata-bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-formata);
+    font-weight: 400;
+    background-color: var(--color-off-white);
+    color: var(--color-gunmetal);
+  }
+}
+
+/* En global.css */
+.logo-dark {
+  display: none;
+}
+[data-theme="dark"] .logo-light {
+  display: none;
+}
+[data-theme="dark"] .logo-dark {
+  display: block;
+}

@@ -1,0 +1,133 @@
+---
+/**
+ * BUTTON — IEEE ICESI
+ * Componente de botón polimórfico: renderiza <a> si recibe href,
+ * o <button> si no (acción real, sin navegación).
+ * variant "hero" añade el efecto de brillo deslizante (CTA principal).
+ * Todas las animaciones respetan prefers-reduced-motion.
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+interface Props {
+  href?: string;
+  variant?: "primary" | "outline" | "nav" | "hero";
+  type?: "button" | "submit" | "reset";
+  class?: string;
+  [key: string]: unknown; // permite atributos extra (aria-*, data-*, id...)
+}
+
+const {
+  href,
+  variant = "primary",
+  type = "button",
+  class: extraClass = "",
+  ...rest
+} = Astro.props;
+
+// Clases base compartidas por todas las variantes
+const baseClasses =
+  "btn-base inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 text-sm font-medium focus:outline-none focus-visible:ring-4";
+
+// Estilos por variante 
+const variantClasses = {
+  primary:
+    "border-2 border-ieee-blue bg-ieee-blue text-white hover:bg-icesi-blue focus-visible:ring-ieee-blue/50",
+  outline:
+    "border-2 border-ieee-blue bg-transparent text-ieee-blue hover:bg-ieee-blue hover:text-white focus-visible:ring-ieee-blue/50",
+  nav: "bg-ieee-blue text-white hover:bg-icesi-blue focus-visible:ring-white/50",
+  hero: "btn-hero border-2 border-ieee-blue bg-ieee-blue text-white focus-visible:ring-ieee-blue/50",
+};
+
+const classes = [baseClasses, variantClasses[variant], extraClass];
+
+// ¿Es enlace o botón? Lo decide la presencia de href.
+const isLink = href !== undefined;
+---
+
+{
+  isLink ? (
+    <a href={href} class:list={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class:list={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  /* === Animación B: relieve (todas las variantes) === */
+  .btn-base {
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 98, 155, 0.25);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .btn-base:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 98, 155, 0.4);
+  }
+
+  .btn-base:active {
+    transform: translateY(0);
+  }
+
+  /* La flecha (si el botón la tiene) se desliza en hover */
+  .btn-base :global(svg),
+  .btn-base :global(.icon) {
+    transition: transform 0.2s ease;
+  }
+  .btn-base:hover :global(svg),
+  .btn-base:hover :global(.icon) {
+    transform: translateX(3px);
+  }
+
+  /* === Animación de brillo deslizante (solo variant="hero") === */
+  .btn-hero {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.35),
+      transparent
+    );
+    transition: left 0.55s ease;
+  }
+  .btn-hero:hover::before {
+    left: 130%;
+  }
+  .btn-hero:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* === Accesibilidad: respeta a quien pide menos movimiento === */
+  @media (prefers-reduced-motion: reduce) {
+    .btn-base,
+    .btn-base:hover,
+    .btn-base:active {
+      transform: none;
+    }
+    .btn-base :global(svg),
+    .btn-base:hover :global(svg) {
+      transform: none;
+    }
+    .btn-hero::before {
+      display: none;
+    }
+  }
+</style>

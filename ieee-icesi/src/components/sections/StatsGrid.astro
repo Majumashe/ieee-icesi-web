@@ -1,0 +1,67 @@
+---
+import SectionTitle from "../ui/SectionTitle.astro";
+// Iconos
+import iconMembers from "../../assets/icons/stats/members.svg";
+import iconProject from "../../assets/icons/stats/code.svg";
+import iconEvents from "../../assets/icons/stats/coffee.svg";
+import iconVolunteers from "../../assets/icons/stats/groups.svg";
+import iconCommittes from "../../assets/icons/stats/bulb.svg";
+import iconAward from "../../assets/icons/stats/prize.svg";
+
+
+const stats = [
+    { icon: iconMembers.src, number: 50, label: "Miembros activos"},
+    { icon: iconProject.src, number: 4, label: "Proyectos"},
+    { icon: iconEvents.src, number: 25, label: "Eventos"},
+    { icon: iconVolunteers.src, number: 65, label: "Voluntarios activos"},
+    { icon: iconCommittes.src, number: 11,  label:"Comités y grupos"},
+    { icon: iconAward.src, number:1, label: "Premio"},
+];
+---
+
+
+<section class="lg:px-40 relative py-16 bg-off-white">
+    <!-- Lottie de fondo -->
+      </div>
+     <div 
+        id="lottie-background" 
+        class="absolute inset-0 z-0 opacity-50"
+        data-src="/lotties/Wave Lines Animation.json"
+    ></div>
+    
+    <div class="mas-w-screen-xl mx-auto px-4">
+        <SectionTitle title="Nuestra familia"/>
+        <p class="hidden text-center pb-6">Un vistazo rapido de lo que hemos contruido juntos.</p>
+        <div class="relative z-10 grid grid-cols-2 md:grid-cols-3 gap-4">
+            {stats.map((stat) => (
+           
+                <div class="bg-white/55 backdrop-blur-x1  rounded-xl p-6 flex flex-col items-center justify-center border border-white/35 shadow-sm hover:shadow-xl hover:scale-105 transition-all duration-300">
+                    <img src={stat.icon} alt="" class="w-12 h-12 mb-2" />
+                    <span class="text-4xl font-bold text-title-black">{stat.number}</span>
+                    <span class="text-sm font-medium text-gray-600 text-center">{stat.label}</span>
+                </div>
+            ))}
+        </div>
+   
+
+
+</section>
+
+
+
+<script>
+    import lottie from 'lottie-web';
+
+    const container = document.getElementById('lottie-background');
+    
+    if (container) {
+        lottie.loadAnimation({
+            container: container,
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: container.dataset.src
+        });
+    }
+</script>
+

@@ -1,0 +1,95 @@
+---
+/**
+ * Dependencias: Tailwind CSS v4 and use please kebab-case for ids and camelCase for const and var
+ * Congrats on your new position and role! :D
+ * By: Majumashe - WebMaster 2026
+ */
+import logoWhite from "../assets/brand/logoWhite.svg";
+---
+
+<footer class="bg-teal text-white max-w-screen-xl mx-auto pt-10">
+    <div class="px-4 sm:px-6 lg:px-12">
+        <!-- Brand -->
+        <a href="/" class="flex items-center   ">
+            <img
+                src={logoWhite.src}
+                alt="IEEE ICESI Student Branch white"
+                decoding="async"
+                loading="lazy"
+                class="h-15 w-auto"
+            />
+            <!-- sr-only: solo visible para lectores de pantalla -->
+            <span class="sr-only">Ir al inicio</span>
+        </a>
+    </div>
+
+    <!-- Links -->
+    <div class="flex flex-row px-4 sm:px-6 lg:px-12  justify-between" >
+        <!--Redes y Conctacto -->
+
+        <div>
+            <!--Toca poner los redireccionamientos apenas los tenga -->
+            <div class="flex flex-wrap gap-4 p-4">
+                <a href="">Facebook</a>
+                <a href="">Instagram</a>
+                <a href="">Linkedin</a>
+                <a href="">Discord</a>
+            </div>
+
+            <div class="p-4">
+                <h3 class="font-bold flex-column pb-5">Contacto</h3>
+
+                <p>Correo@correo.com</p>
+                <p>numero fijo</p>
+                <p class="pb-3 border-b border-white/60">+57 300 000 0000</p>
+            </div>
+        </div>
+
+        <!-- Quick links - Noticias - Recursos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-4 gap-10  ">
+            <!-- Quick links -->
+            <div>
+                <h3 class="font-semibold">Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="">Sobre nosotros</a></li>
+                    <li><a href="">Junta directiva</a></li>
+                    <li><a href="">Capitulos & Grupos</a></li>
+                    <li><a href="">Únete a IEEE</a></li>
+                    <li><a href="">Contáctanos</a></li>
+                </ul>
+                
+            </div>
+            <!--Noticias -->
+
+            <div>
+                <h3 class="font-semibold">Noticias</h3>
+                <ul>
+                    <li><a href="">Blog</a></li>
+                    <li><a href="">FAQ</a></li>
+                    <li><a href="">Galería</a></li>
+                    <li><a href="">Voluntariado</a></li>
+                    <li><a href="">Noticias</a></li>
+                </ul>
+            </div>
+            <!-- Recursos -->
+            
+            <div>
+                <h3 class="font-semibold">Recursos</h3>
+                <ul>
+                    <li><a href="">IEEE.org</a></li>
+                    <li><a href="">IEEE Membership</a></li>
+                    <li><a href="">IEEE Learning Network</a></li>
+                    <li><a href="">IEEE Standards</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Creditos -->
+     <div class="bg-gunmetal flex flex-row justify-between px-4 sm:px-6 lg:px-12 py-4" >
+        <p>© 2025 IEEE ICESI Todos los derechos</p>
+        <a href="">Creditos</a>
+     </div>
+
+</footer>

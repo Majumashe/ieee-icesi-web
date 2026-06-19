@@ -1,0 +1,74 @@
+---
+/**
+ * ANNOUNCEMENT BAR — IEEE ICESI
+ * Barra de anuncios temporal con cierre manual + expiración por fecha.
+ * Responsabilidad única: mostrar/ocultar el anuncio.
+ *
+ * Props:
+ *   endDate es fecha límite (YYYY-MM-DD). Tras ella, el banner no se muestra.
+ *   href es el destino del enlace de acción.
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+interface Props {
+  endDate: string;
+  href?: string;
+}
+
+const { endDate, href = "/join-us" } = Astro.props;
+---
+
+<!-- Barra de anuncios con gradiente de marca -->
+<div
+  id="enrollment-hide-announcement-bar"
+  class="relative flex items-center justify-center gap-2 bg-gradient-to-r from-ieee-blue to-teal px-4 py-2.5"
+  data-end-date={endDate}
+>
+  <svg class="h-4 w-4 text-white" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path>
+  </svg>
+  <p class="text-sm text-white">
+    Inscripciones abiertas — sé parte de IEEE Icesi
+    <a href={href} class="font-semibold underline underline-offset-2"> Más info </a>
+  </p>
+  <button
+    class="absolute right-4 p-1 text-white/80 transition-colors hover:text-white"
+    type="button"
+    id="cta-header-announcement-bar-close"
+    title="Cerrar anuncio"
+  >
+    <span class="sr-only">Cerrar barra de anuncios</span>
+    <svg width="16" height="16" aria-hidden="true" viewBox="0 0 384 512">
+      <path
+        fill="currentColor"
+        d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3l105.4 105.3c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256z"
+      ></path>
+    </svg>
+  </button>
+</div>
+
+<script>
+  // Toda la lógica vive en el navegador (usa localStorage y fechas)
+  const announcementBar = document.getElementById("enrollment-hide-announcement-bar");
+  const closeButton = document.getElementById("cta-header-announcement-bar-close");
+
+  // La fecha límite viaja por data-attribute desde el frontmatter
+  const endDate = announcementBar?.dataset.endDate ?? "";
+
+  const hasExpired = (date: string) => Boolean(date) && new Date() > new Date(date);
+  const manuallyClosed = sessionStorage.getItem("announcement-closed") === "true";
+
+  // Oculta si ya fue cerrado o si la fecha ya pasó
+  if (manuallyClosed || hasExpired(endDate)) {
+    announcementBar?.classList.add("hidden");
+  }
+
+  // Botón de cerrar: oculta y recuerda la decisión
+  if (closeButton && announcementBar) {
+    closeButton.addEventListener("click", () => {
+      announcementBar.classList.add("hidden");
+      sessionStorage.setItem("announcement-closed", "true");
+    });
+  }
+</script>
