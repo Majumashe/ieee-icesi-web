@@ -16,6 +16,7 @@
     "@astrojs/sitemap": "^3.7.3",
     "@tailwindcss/vite": "^4.3.1",
     "astro": "^6.4.7",
+    "lottie-web": "^5.13.0",
     "tailwindcss": "^4.3.1"
   },
   "devDependencies": {
