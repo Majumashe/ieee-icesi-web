@@ -1,57 +1,158 @@
 ---
 /**
- * Sección: Un poco sobre nosotros (texto + video)
+ * ABOUT US VIDEO — IEEE ICESI
+ * Sección "Sobre nosotros": video a la izquierda, texto a la derecha.
+ * El video de YouTube usa lazy-load: solo muestra la miniatura hasta que
+ * Respeta el tema (claro/oscuro) vía variables --hero-*.
+ * Dependencias: Tailwind CSS v4
  * By: Majumashe - WebMaster 2026
- *
- * Nota: Video embed general de IEEE (puedes cambiar el ID si luego tienes tu video)
  */
 
-const youtubeId = "msCpKC7yhhU"; // IEEE Introduction
+import Button from "../ui/Button.astro";
+
+interface Props {
+  videoId?: string; // ID del video de YouTube
+}
+
+// Placeholder (cámbialo por el ID real del video de la rama)
+const { videoId = "dQw4w9WgXcQ" } = Astro.props;
+
+// Miniatura oficial de YouTube en alta resolución
+const thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
 ---
 
-<section class="w-full bg-gunmetal">
-  <div class="grid grid-cols-1 lg:grid-cols-2 min-h-[520px]">
-    <!-- Columna izquierda -->
-    <div class="flex items-center">
-      <div class="max-w-xl px-6 sm:px-10 lg:px-16 py-12">
-        <h2 class="text-4xl lg:text-5xl font-semibold tracking-tight text-white">
-          Un poco sobre <span class="uppercase">nosotros</span>
-        </h2>
-
-        <p class="mt-6 text-white/85 leading-relaxed">
-          Somos la Rama Estudiantil IEEE de la Universidad Icesi: una comunidad para aprender,
-          construir proyectos y crecer en networking.
-        </p>
-
-        <p class="mt-4 text-white/75 leading-relaxed">
-          Hacemos eventos técnicos y sociales, apoyamos el desarrollo profesional y conectamos
-          estudiantes con oportunidades dentro y fuera de la U.
-        </p>
-
-        <a
-          href="/community"
-          class="mt-10 inline-flex items-center justify-center px-8 py-3 rounded-xl bg-white text-title-black font-medium
-                 hover:bg-white/90 transition-colors"
-        >
-          Conocer más
-        </a>
-      </div>
+<section class="about-themed">
+  <div
+    class="mx-auto grid max-w-screen-xl grid-cols-1 items-center gap-10 px-6 py-16 lg:grid-cols-[1.1fr_1fr] lg:px-12 lg:py-24"
+  >
+    <!-- Columna izquierda: video lazy-load -->
+    <div
+      class="about-video relative aspect-video w-full overflow-hidden rounded-2xl"
+      data-video-id={videoId}
+    >
+      <!-- Miniatura + botón play (se reemplaza por el iframe al hacer clic) -->
+      <button class="about-video-trigger group" aria-label="Reproducir video">
+        <img
+          src={thumbnail}
+          alt="Video sobre IEEE ICESI"
+          loading="lazy"
+          class="h-full w-full object-cover"
+        />
+        <span class="about-video-overlay"></span>
+        <span class="about-play">
+          <svg class="h-7 w-7" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z"></path>
+          </svg>
+        </span>
+      </button>
     </div>
 
-    <!-- Columna derecha (Video) -->
-    <div class="relative bg-black/20">
-      <div class="absolute inset-0">
-        <iframe
-          class="w-full h-full"
-          src={`https://www.youtube.com/embed/${youtubeId}?rel=0&modestbranding=1`}
-          title="Video introductorio IEEE"
-          frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowfullscreen></iframe>
+    <!-- Columna derecha: texto -->
+    <div>
+      <div class="mb-4 border-l-[3px] border-ieee-blue pl-3">
+        <span
+          class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase"
+        >
+          Sobre nosotros
+        </span>
       </div>
 
-      <!-- Overlay sutil para que se vea “pro” cuando el video carga -->
-      <div class="pointer-events-none absolute inset-0 ring-1 ring-white/10"></div>
+      <h2 class="about-title mb-4 text-3xl leading-tight font-bold lg:text-4xl">
+        Más que una rama estudiantil
+      </h2>
+
+      <p class="about-lead mb-6 max-w-md text-lg leading-relaxed">
+        Conoce quiénes somos, qué hacemos y por qué cientos de estudiantes han
+        encontrado en IEEE ICESI un espacio para crecer técnica y
+        profesionalmente.
+      </p>
+
+      <Button href="/community" variant="primary">Conoce más</Button>
     </div>
   </div>
 </section>
+
+<style>
+  .about-themed {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+  }
+  .about-title {
+    color: var(--hero-text);
+  }
+  .about-lead {
+    color: var(--hero-text-muted);
+  }
+
+  .about-video {
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.4);
+  }
+  .about-video-trigger {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    background: none;
+  }
+  .about-video-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(14, 17, 19, 0.25);
+    transition: background 0.3s ease;
+  }
+  .about-video-trigger:hover .about-video-overlay {
+    background: rgba(14, 17, 19, 0.1);
+  }
+  .about-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--color-ieee-blue);
+    padding-left: 4px;
+    transition: transform 0.3s ease;
+  }
+  .about-video-trigger:hover .about-play {
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .about-video-trigger:hover .about-play {
+      transform: translate(-50%, -50%);
+    }
+  }
+</style>
+
+<script>
+  // Lazy-load: al hacer clic, reemplaza la miniatura por el iframe real
+  document.querySelectorAll<HTMLElement>(".about-video").forEach((container) => {
+    const trigger = container.querySelector(".about-video-trigger");
+    const videoId = container.dataset.videoId;
+
+    trigger?.addEventListener("click", () => {
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`;
+      iframe.title = "Video sobre IEEE ICESI";
+      iframe.allow =
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+      iframe.allowFullscreen = true;
+      iframe.style.position = "absolute";
+      iframe.style.inset = "0";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.border = "0";
+      container.innerHTML = "";
+      container.appendChild(iframe);
+    });
+  });
+</script>
