@@ -1,63 +1,120 @@
 ---
-/**Auto-play carousel :3 (local)
+/**
+ * PHOTOS CAROUSEL — IEEE ICESI
+ * Carrusel de fotos con cross-fade automático + logos de marca.
  *
+ * ─────────────────────────────────────────────────────────────
+ * CÓMO AGREGAR UNA FOTO:
+ *   1. Suelta la imagen en la carpeta:  src/assets/gallery/
+ *      (formatos válidos: .jpg .jpeg .png .webp)
+ *   2. ¡Listo! Se carga sola en el carrusel, no hay que tocar código.
  *
- * */
+ *   Opcional — para que la foto tenga una descripción (accesibilidad/SEO):
+ *   añade una línea al objeto `captions` de abajo con el nombre EXACTO
+ *   del archivo. Ejemplo:
+ *       "hackathon-2026.jpg": "Hackathon IEEE ICESI 2026",
+ *   Si no le pones caption, usa un texto genérico automáticamente.
+ *
+ *   El ORDEN del carrusel es alfabético por nombre de archivo.
+ *   Para controlarlo, nombra las fotos con prefijo: 01-xxx.jpg, 02-xxx.jpg...
+ * ─────────────────────────────────────────────────────────────
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
 import ieeeWhite from "../../assets/brand/ieeeWhite.svg";
 import logoWhite from "../../assets/brand/logoWhite.svg";
-const images = [
-  { src: "/carousel/foto1.jpg", alt: "RNR Bucaramanga 2025" },
-  { src: "/carousel/foto2.jpg", alt: "RNR Bucaramanga 2025 team" },
-  { src: "/carousel/foto3.jpg", alt: "IEEE day By USC 2025" },
-  { src: "/carousel/foto4.jpg", alt: "RNR Bucaramanga 2025 stuff" },
-  { src: "/carousel/foto5.jpg", alt: "Reunion general IEEE Icesi 2025" },
-  { src: "/carousel/foto6.jpg", alt: "Consejeros de la rama 2025" },
-];
+
+// Carga automática de TODAS las imágenes de la carpeta gallery.
+// eager: true → las importa en build (para poder optimizarlas).
+const modules = import.meta.glob<{ default: ImageMetadata }>(
+  "../../assets/gallery/*.{jpg,jpeg,png,webp}",
+  { eager: true },
+);
+
+// Descripciones opcionales por nombre de archivo (accesibilidad/SEO).
+// Si una foto no está aquí, usa un texto genérico.
+const captions: Record<string, string> = {
+  "foto1.jpg": "RNR Bucaramanga 2025",
+  "foto2.jpg": "Equipo en RNR Bucaramanga 2025",
+  "foto3.jpg": "IEEE Day 2025",
+  "foto4.jpg": "RNR Bucaramanga 2025",
+  "foto5.jpg": "Reunión general IEEE ICESI 2025",
+  "foto6.jpg": "Consejeros de la rama 2025",
+};
+
+// Transformamos los módulos en una lista ordenada por nombre de archivo.
+const images = Object.entries(modules)
+  .map(([path, mod]) => {
+    const filename = path.split("/").pop() || "";
+    return {
+      image: mod.default,
+      alt: captions[filename] || "Foto de la comunidad IEEE ICESI",
+    };
+  })
+  .sort((a, b) => a.image.src.localeCompare(b.image.src));
 ---
 
-<section class="bg-gunmetal">
-  <div class="carousel relative max-w-7xl mx-auto overflow-hidden h-80 lg:h-112">
+<section class="carousel-section">
+  <div
+    class="carousel relative mx-auto h-80 max-w-7xl overflow-hidden lg:h-[28rem]"
+    data-carousel
+  >
     {
       images.map((img, index) => (
-        <img
-          src={img.src}
+        <Image
+          src={img.image}
           alt={img.alt}
           class:list={[
-            "carousel-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000",
+            "carousel-slide absolute inset-0 h-full w-full object-cover transition-opacity duration-1000",
             index === 0 ? "opacity-100 z-10" : "opacity-0 z-0",
           ]}
+          loading={index === 0 ? "eager" : "lazy"}
         />
       ))
     }
+
+    <!-- Barra inferior con logos de marca -->
     <div
-      class="absolute inset-x-0 bottom-0 z-20 h-20 sm:h-24
-            flex items-center justify-between px-6 sm:px-8
-            bg-gradient-to-t from-black/75 via-black/60 to-transparent
-            backdrop-blur-sd pointer-events-none"
+      class="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex h-20 items-center justify-between bg-gradient-to-t from-black/75 via-black/60 to-transparent px-6 sm:h-24 sm:px-8"
     >
       <img class="h-8 sm:h-10 md:h-12 lg:h-16" src={ieeeWhite.src} alt="IEEE" />
-      <img class="h-8 sm:h-10 md:h-12 lg:h-16" src={logoWhite.src} alt="IEEE ICESI" />
+      <img
+        class="h-8 sm:h-10 md:h-12 lg:h-16"
+        src={logoWhite.src}
+        alt="IEEE ICESI"
+      />
     </div>
   </div>
 </section>
 
+<style>
+  .carousel-section {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+    padding: 3rem 0;
+  }
+</style>
+
 <script>
-  import { slide } from "astro:transitions";
+  const carousel = document.querySelector("[data-carousel]");
+  if (carousel) {
+    const slides = carousel.querySelectorAll(".carousel-slide");
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
 
-  window.addEventListener("DOMContentLoaded", () => {
-    const slides = document.querySelectorAll(".carousel-slide");
-    let current = 0;
-
-    if (!slides.length) return;
-
-    setInterval(() => {
-      slides[current].classList.remove("opacity-100", "z-10");
-      slides[current].classList.add("opacity-0", "z-0");
-
-      current = (current + 1) % slides.length;
-
-      slides[current].classList.remove("opacity-0", "z-0");
-      slides[current].classList.add("opacity-100", "z-10");
-    }, 5000);
-  });
+    if (slides.length > 1 && !reduceMotion) {
+      let current = 0;
+      setInterval(() => {
+        slides[current].classList.remove("opacity-100", "z-10");
+        slides[current].classList.add("opacity-0", "z-0");
+        current = (current + 1) % slides.length;
+        slides[current].classList.remove("opacity-0", "z-0");
+        slides[current].classList.add("opacity-100", "z-10");
+      }, 5000);
+    }
+  }
 </script>

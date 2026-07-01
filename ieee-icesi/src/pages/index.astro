@@ -4,10 +4,18 @@ import Layout from "../layouts/Layout.astro";
 import Hero from "../components/Hero.astro";
 import AboutUsVideo from "../components/sections/AboutUsVideoCard.astro";
 import StatsGrid from "../components/sections/StatsGrid.astro";
+import Slider from "../components/Slider.astro";
+import PhotosCarousel from "../components/sections/PhotosCarousel.astro";
+import EventsSection from "../components/sections/EventsSection.astro";
+import CommunityMosaic from "../components/CommunityMosaic.astro";
 ---
 
 <Layout title="Inicio">
   <Hero />
   <AboutUsVideo videoId="msCpKC7yhhU" />
-   <StatsGrid />
+  <EventsSection />
+  <StatsGrid />
+  <Slider />
+  <CommunityMosaic />
+  <PhotosCarousel />
 </Layout>
