@@ -1,106 +1,327 @@
 ---
 /**
- * Componente: Pasos para unirse
- * Estilo: inspirado en wireframe (oscuro, alto contraste, CTAs claros)
+ * JOIN US STEPS — IEEE ICESI
+ * "Cómo unirte" en 3 pasos con paso activo rotativo, anillo pulsante,
+ * líneas de progreso y hover. Diseño base hecho en Claude Design,
+ * adaptado al sistema de tema y marca del sitio.
+ *
  * By: Majumashe - WebMaster 2026
  */
 
-// Iconos de redes
-import iconInstagram from "../../assets/icons/redes/instagram.svg";
-import iconDiscord from "../../assets/icons/redes/discord.svg";
-
 const steps = [
   {
-    number: 1,
-    title: "Síguenos",
-    description:
-      "Mantente al tanto de todo. Sigue nuestro Instagram y únete a nuestro Discord para enterarte de oportunidades, convocatorias, eventos y actividades exclusivas.",
-    cta: null,
-    socials: true,
+    n: "1",
+    title: "Llena el formulario",
+    desc: "Cuéntanos quién eres, qué estudias y qué capítulo te interesa.",
   },
   {
-    number: 2,
-    title: "Asiste a Eventos",
-    description:
-      "Cada semana hacemos actividades sociales, técnicas y profesionales... ¡y casi siempre hay comida gratis! RSVP para no perderte cupos limitados.",
-    cta: { label: "Ver próximos eventos", href: "/events" },
-    socials: false,
+    n: "2",
+    title: "Te contactamos",
+    desc: "El equipo te escribe con los siguientes pasos y la bienvenida.",
   },
   {
-    number: 3,
-    title: "Hazte Miembro Oficial",
-    description:
-      "Llena el formulario de membresía y, si eliges pagar la cuota opcional de IEEE, podrás reclamar tu camiseta oficial y acceder a beneficios extra.",
-    cta: { label: "Formulario de miembro", href: "#" },
-    socials: false,
+    n: "3",
+    title: "¡Ya eres parte!",
+    desc: "Entra a los grupos, participa en eventos y empieza a sumar puntos.",
   },
 ];
 ---
 
-<section class="py-16 bg-ieee-blue text-white">
-  <div class="max-w-screen-xl mx-auto px-4 lg:px-12">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
-      {steps.map((step) => (
-        <div class="text-center flex flex-col items-center">
-          <!-- Número (estilo wireframe) -->
-          <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-white/90 text-title-black text-4xl font-semibold shadow-sm ring-1 ring-white/25 mb-6">
-            {step.number}
-          </div>
+<section class="cu-section">
+  <div class="cu-blob a" aria-hidden="true"></div>
+  <div class="cu-blob b" aria-hidden="true"></div>
 
-          <!-- Título -->
-          <h3 class="text-2xl md:text-3xl font-semibold tracking-tight mb-4">
-            {step.title}
-          </h3>
+  <div class="cu-wrap">
+    <div class="mb-5 border-l-[3px] border-ieee-blue pl-3">
+      <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+        Cómo unirte
+      </span>
+    </div>
+    <h2 class="cu-h2">Unirte es así de simple.</h2>
+    <p class="cu-lead">
+      Tres pasos, unos minutos, y ya estás dentro. Pásale el cursor a cada paso
+      para verlo de cerca.
+    </p>
 
-          <!-- Descripción -->
-          <p class="text-white/85 text-base leading-relaxed max-w-xs mb-8">
-            {step.description}
-          </p>
-
-          <!-- Socials -->
-          {step.socials && (
-            <div class="flex justify-center gap-6 mt-auto">
-              <a
-                href="https://instagram.com/ieeeicesi"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="w-12 h-12 flex items-center justify-center rounded-full border border-white/50 bg-white/0 hover:bg-white transition-colors duration-200"
-                aria-label="Instagram"
-              >
-                <img
-                  src={iconInstagram.src}
-                  alt="Instagram"
-                  class="w-6 h-6 invert group-hover:invert-0"
-                />
-              </a>
-              <a
-                href="https://discord.gg/ieeeicesi"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="w-12 h-12 flex items-center justify-center rounded-full border border-white/50 bg-white/0 hover:bg-white transition-colors duration-200"
-                aria-label="Discord"
-              >
-                <img
-                  src={iconDiscord.src}
-                  alt="Discord"
-                  class="w-6 h-6 invert group-hover:invert-0"
-                />
-              </a>
+    <div class="cu-grid" id="cuGrid">
+      {
+        steps.map((s, i) => (
+          <div class="cu-step">
+            <div class="cu-card" data-i={i}>
+              <div class="cu-node">
+                <div class="cu-zoom">
+                  <div class="cu-disk-wrap">
+                    <div class="cu-ring" />
+                    <div class="cu-disk">{s.n}</div>
+                  </div>
+                </div>
+                {i < steps.length - 1 && (
+                  <div class="cu-line">
+                    <div class="cu-fill" />
+                  </div>
+                )}
+              </div>
+              <h3 class="cu-title">{s.title}</h3>
+              <div class="cu-under" />
+              <p class="cu-desc">{s.desc}</p>
             </div>
-          )}
-
-          <!-- CTA Button -->
-          {step.cta && (
-            <a
-              href={step.cta.href}
-              class="mt-auto inline-flex items-center justify-center px-7 py-3 rounded-xl border border-white/55 text-white
-                     hover:bg-white hover:text-ieee-blue transition-colors duration-200 text-sm font-medium"
-            >
-              {step.cta.label}
-            </a>
-          )}
-        </div>
-      ))}
+          </div>
+        ))
+      }
     </div>
   </div>
 </section>
+
+<style>
+  .cu-section {
+    --accent: var(--color-icesi-deep);
+    position: relative;
+    overflow: hidden;
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+    padding: 80px 40px 96px;
+  }
+  .cu-blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: cu-float 11s ease-in-out infinite;
+  }
+  .cu-blob.a {
+    top: -120px;
+    right: -60px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 70%
+    );
+  }
+  .cu-blob.b {
+    bottom: -160px;
+    left: -80px;
+    width: 360px;
+    height: 360px;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-ieee-blue) 10%, transparent),
+      transparent 70%
+    );
+    animation-duration: 13s;
+    animation-direction: reverse;
+  }
+  .cu-wrap {
+    position: relative;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+  .cu-h2 {
+    margin: 0 0 12px;
+    max-width: 640px;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--hero-text);
+  }
+  .cu-lead {
+    margin: 0 0 56px;
+    max-width: 520px;
+    color: var(--hero-text-muted);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .cu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+    align-items: start;
+  }
+
+  .cu-step {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: cu-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+  .cu-step:nth-child(1) { animation-delay: 0.06s; }
+  .cu-step:nth-child(2) { animation-delay: 0.19s; }
+  .cu-step:nth-child(3) { animation-delay: 0.32s; }
+
+  .cu-card {
+    cursor: pointer;
+    padding: 10px 12px 16px;
+    border-radius: 18px;
+    background: transparent;
+    transition:
+      transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+      box-shadow 0.5s,
+      background 0.5s;
+  }
+  .cu-card.active {
+    transform: translateY(-8px);
+    background: color-mix(in srgb, var(--hero-text) 4%, transparent);
+    box-shadow: 0 28px 54px -26px color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .cu-node {
+    display: flex;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+  .cu-zoom {
+    display: inline-block;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .cu-card.active .cu-zoom {
+    transform: scale(1.12);
+  }
+  .cu-disk-wrap {
+    position: relative;
+    width: 56px;
+    height: 56px;
+  }
+  .cu-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+  }
+  .cu-card.active .cu-ring {
+    animation: cu-pulse 1.9s ease-out infinite;
+  }
+  .cu-disk {
+    position: relative;
+    z-index: 2;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    font-weight: 700;
+    box-shadow: 0 12px 26px -10px color-mix(in srgb, var(--accent) 75%, transparent);
+  }
+  .cu-line {
+    position: relative;
+    flex: 1;
+    height: 3px;
+    margin-left: 16px;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--hero-text) 12%, transparent);
+    overflow: hidden;
+  }
+  .cu-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    border-radius: 99px;
+    background: linear-gradient(
+      90deg,
+      var(--accent),
+      color-mix(in srgb, var(--accent) 60%, transparent)
+    );
+    transition: width 0.6s ease;
+  }
+  .cu-card.reached .cu-fill {
+    width: 100%;
+  }
+
+  .cu-title {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--hero-text);
+  }
+  .cu-under {
+    height: 3px;
+    width: 0;
+    margin-top: 8px;
+    border-radius: 99px;
+    background: var(--accent);
+    transition: width 0.5s ease;
+  }
+  .cu-card.active .cu-under {
+    width: 46px;
+  }
+  .cu-desc {
+    margin: 14px 0 0;
+    max-width: 280px;
+    color: var(--hero-text-muted);
+    font-size: 15px;
+    line-height: 1.62;
+  }
+
+  @keyframes cu-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes cu-pulse {
+    0% { transform: scale(0.92); opacity: 0.5; }
+    70% { opacity: 0; }
+    100% { transform: scale(2.15); opacity: 0; }
+  }
+  @keyframes cu-float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(0, -14px); }
+  }
+
+  /* Respeta prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .cu-step { opacity: 1; transform: none; animation: none; }
+    .cu-blob { animation: none; }
+    .cu-card.active .cu-ring { animation: none; }
+    .cu-card.active { transform: none; }
+  }
+</style>
+
+<script>
+  const grid = document.getElementById("cuGrid");
+  if (grid) {
+    const cards = [...grid.querySelectorAll<HTMLElement>(".cu-card")];
+    let active = 0;
+    let timer: ReturnType<typeof setInterval>;
+    let hover = false;
+    const CYCLE = 2800;
+
+    const render = () => {
+      cards.forEach((c, i) => {
+        c.classList.toggle("active", i === active);
+        c.classList.toggle("reached", i < active);
+      });
+    };
+
+    const start = () => {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        if (!hover) {
+          active = (active + 1) % cards.length;
+          render();
+        }
+      }, CYCLE);
+    };
+
+    cards.forEach((c, i) => {
+      c.addEventListener("mouseenter", () => {
+        hover = true;
+        active = i;
+        render();
+      });
+      c.addEventListener("click", () => {
+        active = i;
+        render();
+      });
+    });
+    grid.addEventListener("mouseleave", () => {
+      hover = false;
+    });
+
+    render();
+    start();
+  }
+</script>

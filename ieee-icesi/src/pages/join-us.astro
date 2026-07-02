@@ -1,0 +1,695 @@
+---
+/**
+ * PÁGINA ÚNETE — IEEE ICESI
+ * Hero con fondo Vanta NET (teal sobre gunmetal) + estado de inscripciones ·
+ * beneficios reales · pasos · Voluntario vs Miembro · FAQ · CTA final.
+ * Guardar como: src/pages/join-us.astro  (URL: /join-us)
+ *
+ * ─────────────────────────────────────────────────────────────
+ * CONFIGURACIÓN RÁPIDA (edita estas constantes):
+ *   INSCRIPCIONES_ABIERTAS → true/false según el periodo
+ *   PROXIMA_APERTURA       → texto si están cerradas
+ *   FORM_URL               → enlace al formulario (pendiente el servicio)
+ * ─────────────────────────────────────────────────────────────
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+import Layout from "../layouts/Layout.astro";
+import Button from "../components/ui/Button.astro";
+import JoinUsSteps from "../components/sections/JoinUsSteps.astro";
+
+// Foto para el FAQ (ajusta el nombre al archivo real en src/assets/gallery/)
+import fotoFaq from "../assets/gallery/foto2.jpg";
+
+// Íconos reales de la rama (los que ya tenías en assets/icons/join/)
+import iconWorld from "../assets/icons/join/world.svg";
+import iconChip from "../assets/icons/join/chip.svg";
+import iconPopcorn from "../assets/icons/join/popcorn.svg";
+import iconArrowup from "../assets/icons/join/arrowup.svg";
+import iconPaper from "../assets/icons/join/paper.svg";
+import iconPrize from "../assets/icons/join/prize.svg";
+
+// ── Configuración del periodo ──
+const INSCRIPCIONES_ABIERTAS = true;
+const PROXIMA_APERTURA = "Marzo 2026";
+const FORM_URL = "https://mi-formulario.com"; // ← cambiar por el formulario real
+
+// ── Beneficios (los 6 reales de la rama, con sus íconos) ──
+const benefits = [
+  {
+    title: "Networking global",
+    text: "Conecta con la red IEEE más grande del mundo: estudiantes, docentes y profesionales.",
+    icon: iconWorld.src,
+  },
+  {
+    title: "Proyectos reales",
+    text: "Aplica lo que aprendes en proyectos técnicos con impacto, no solo teoría.",
+    icon: iconChip.src,
+  },
+  {
+    title: "Comunidad y recreación",
+    text: "Más que estudiar: eventos, integraciones y una familia que te acompaña.",
+    icon: iconPopcorn.src,
+  },
+  {
+    title: "Trayectoria profesional",
+    text: "Certificaciones, liderazgo y experiencia que marcan la diferencia en tu CV.",
+    icon: iconArrowup.src,
+  },
+  {
+    title: "Recursos y aprendizaje",
+    text: "Acceso a bibliotecas digitales, cursos, revistas y material técnico IEEE.",
+    icon: iconPaper.src,
+  },
+  {
+    title: "Hackatones y competencias",
+    text: "Reta tus habilidades en concursos, hackatones y semilleros de innovación.",
+    icon: iconPrize.src,
+  },
+];
+
+// ── Tipos de membresía (reales de la rama) ──
+const volunteerBenefits = [
+  "Participa en comités (Comunicaciones, Eventos, Logística, Proyectos, etc.)",
+  "Apoya y organiza actividades y talleres",
+  "Representa a IEEE ICESI en eventos, competencias y congresos",
+  "Puede postularse a la junta directiva de un capítulo",
+  "Certificaciones oficiales de servicio, liderazgo y participación",
+  "Construye un portafolio profesional sólido (CV, LinkedIn, GitHub)",
+];
+const memberBenefits = [
+  "Certificado y número de membresía internacional",
+  "Acceso a recursos globales, bibliotecas digitales y revistas",
+  "Prioridad en talleres, charlas técnicas y eventos especializados",
+  "Oportunidades en becas, concursos, semilleros y viajes académicos",
+  "Derecho a participar en los capítulos técnicos de la universidad",
+  "Camiseta oficial de la rama estudiantil",
+];
+
+// ── FAQ ──
+const faqs = [
+  {
+    q: "¿Tiene algún costo unirse a la rama?",
+    a: "Participar como voluntario en las actividades de la rama es abierto. La membresía oficial IEEE (internacional) tiene un costo anual con descuento de estudiante, pero es opcional para empezar.",
+  },
+  {
+    q: "¿Debo ser de una carrera de ingeniería?",
+    a: "No. Cualquier estudiante de ICESI con interés en tecnología es bienvenido, sin importar su carrera.",
+  },
+  {
+    q: "¿Cuánto tiempo debo dedicarle?",
+    a: "Tú decides tu nivel de participación: desde asistir a eventos hasta liderar un comité. No hay mínimo obligatorio.",
+  },
+  {
+    q: "¿Qué es un capítulo y cómo elijo uno?",
+    a: "Los capítulos son grupos por área de interés (computación, energía, mujeres en ingeniería...). Puedes explorar varios antes de decidir, o participar en la rama general.",
+  },
+];
+---
+
+<Layout
+  title="Únete"
+  description="Haz parte de la Rama Estudiantil IEEE de la Universidad ICESI: proyectos, eventos, comunidad y crecimiento profesional."
+>
+  <!-- ═══════════ HERO (fondo Vanta NET) ═══════════ -->
+  <section class="join-hero" id="vanta-hero">
+    <div class="relative z-10 mx-auto max-w-screen-xl px-6 py-20 lg:px-12 lg:py-28">
+      <div class="mx-auto max-w-3xl text-center">
+        {
+          INSCRIPCIONES_ABIERTAS ? (
+            <span class="status status--open">
+              <span class="status-dot" />
+              Inscripciones abiertas
+            </span>
+          ) : (
+            <span class="status status--closed">
+              <span class="status-dot" />
+              Inscripciones cerradas · vuelven en {PROXIMA_APERTURA}
+            </span>
+          )
+        }
+
+        <h1 class="join-h1">Tu carrera necesita más que clases.</h1>
+        <p class="join-sub">
+          Únete a la familia IEEE ICESI: proyectos reales, eventos, contactos y una comunidad que
+          crece contigo.
+        </p>
+
+        <div class="join-hero-cta">
+          {
+            INSCRIPCIONES_ABIERTAS ? (
+              <Button href={FORM_URL} variant="light" target="_blank" rel="noopener" data-confetti>
+                Quiero unirme
+              </Button>
+            ) : (
+              <Button href="#faq" variant="light">
+                Conoce más mientras tanto
+              </Button>
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ BENEFICIOS ═══════════ -->
+  <section class="join-section">
+    <div class="mx-auto max-w-screen-xl px-6 py-16 lg:px-12">
+      <div class="mb-12 border-l-[3px] border-ieee-blue pl-3">
+        <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+          Por qué unirte
+        </span>
+      </div>
+      <div class="benefits-grid">
+        {
+          benefits.map((b) => (
+            <div class="benefit">
+              <div class="benefit-icon">
+                <img src={b.icon} alt="" aria-hidden="true" />
+              </div>
+              <h3 class="benefit-title">{b.title}</h3>
+              <p class="benefit-text">{b.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ PASOS (componente animado) ═══════════ -->
+  <JoinUsSteps />
+
+  <!-- ═══════════ VOLUNTARIO VS MIEMBRO ═══════════ -->
+  <section class="join-section">
+    <div class="mx-auto max-w-screen-xl px-6 py-16 lg:px-12">
+      <div class="mb-12 border-l-[3px] border-ieee-blue pl-3">
+        <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+          Formas de participar
+        </span>
+      </div>
+      <div class="tiers-grid">
+        <!-- Voluntario -->
+        <div class="tier">
+          <h3 class="tier-name">Voluntario IEEE</h3>
+          <p class="tier-tag">Vive la rama desde adentro</p>
+          <ul class="tier-list">
+            {volunteerBenefits.map((b) => <li>{b}</li>)}
+          </ul>
+          {
+            INSCRIPCIONES_ABIERTAS && (
+              <Button
+                href={FORM_URL}
+                variant="outline"
+                target="_blank"
+                rel="noopener"
+                data-confetti
+              >
+                Ser voluntario
+              </Button>
+            )
+          }
+        </div>
+        <!-- Miembro -->
+        <div class="tier tier--featured">
+          <span class="tier-badge">Recomendado</span>
+          <h3 class="tier-name">Miembro IEEE</h3>
+          <p class="tier-tag">Membresía internacional</p>
+          <ul class="tier-list">
+            {memberBenefits.map((b) => <li>{b}</li>)}
+          </ul>
+          <Button
+            href="https://www.ieee.org/membership/join"
+            variant="hero"
+            target="_blank"
+            rel="noopener"
+          >
+            Conocer la membresía
+          </Button>
+        </div>
+      </div>
+      <!-- Nota aclaratoria -->
+      <p class="mt-7 text-center text-[15px]" style="color: var(--hero-text-muted)">
+        ¿No sabes por dónde empezar?
+        <strong style="color: var(--hero-text)">Puedes ser voluntario y miembro a la vez.</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════ FAQ + FOTO ═══════════ -->
+  <section class="join-section" id="faq">
+  <div class="mx-auto max-w-screen-xl px-6 py-16 lg:px-12">
+    <div class="faq-layout">
+      <!-- Preguntas (izquierda) -->
+      <div>
+        <div class="mb-12 border-l-[3px] border-ieee-blue pl-3">
+          <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+            Preguntas frecuentes
+          </span>
+        </div>
+        <div class="faq-list">
+          {
+            faqs.map((f) => (
+              <details class="faq">
+                <summary class="faq-q">
+                  {f.q}
+                  <svg
+                    class="faq-chevron"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </summary>
+                <p class="faq-a">{f.a}</p>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Foto (derecha) -->
+      <div class="faq-photo">
+        <img src={fotoFaq.src} alt="Comunidad IEEE ICESI" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CTA FINAL ═══════════ -->
+<section class="join-final">
+  <div class="mx-auto max-w-screen-xl px-6 py-20 text-center lg:px-12">
+    <h2 class="join-final-title">¿Listo para hacer parte?</h2>
+    <p class="join-final-sub">
+      {
+        INSCRIPCIONES_ABIERTAS
+          ? "Las inscripciones están abiertas. Este es el momento."
+          : `Las inscripciones vuelven en ${PROXIMA_APERTURA}. Síguenos para no perderte la apertura.`
+      }
+    </p>
+    <div class="mt-8 flex justify-center">
+      {
+        INSCRIPCIONES_ABIERTAS ? (
+          <Button href={FORM_URL} variant="light" target="_blank" rel="noopener" data-confetti>
+            Unirme a IEEE ICESI
+          </Button>
+        ) : (
+          <Button href="/community" variant="light">
+            Conoce a la comunidad
+          </Button>
+        )
+      }
+    </div>
+  </div>
+  </section>
+</Layout>
+
+<!-- ═══════════ Script de Vanta (solo esta página) ═══════════ -->
+<script>
+  const loadScript = (src: string) =>
+    new Promise<void>((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = () => resolve();
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+
+  const initVanta = async () => {
+    const el = document.getElementById("vanta-hero");
+    if (!el) return;
+    // Respeta a quien prefiere menos movimiento (y ahorra el peso)
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    try {
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js");
+      await loadScript("https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.halo.min.js");
+      // @ts-ignore — VANTA viene del script externo
+      window.VANTA.HALO({
+        el: "#vanta-hero",
+        baseColor: 0x00629b, // Azul IEEE
+        backgroundColor: 0x0e1113, // Gunmetal
+        amplitudeFactor: 1.6,
+        size: 1.5,
+        mouseControls: true,
+        touchControls: true,
+      });
+    } catch {
+      // Si falla el CDN, queda el fondo gunmetal de respaldo. Nada se rompe.
+    }
+  };
+
+  initVanta();
+</script>
+
+<!-- ═══════════ Confetti al unirse ═══════════ -->
+<script>
+  const loadConfetti = () =>
+    new Promise<void>((resolve, reject) => {
+      // @ts-ignore
+      if (window.confetti) return resolve();
+      const s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
+      s.onload = () => resolve();
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+
+  document.querySelectorAll<HTMLAnchorElement>("[data-confetti]").forEach((btn) => {
+    btn.addEventListener("click", async (e) => {
+      const href = btn.getAttribute("href");
+      const targetBlank = btn.getAttribute("target") === "_blank";
+
+      // Solo interceptamos si hay un enlace de verdad
+      if (!href || href === "#") return;
+
+      e.preventDefault();
+
+      try {
+        await loadConfetti();
+        // @ts-ignore — confetti viene del script externo
+        window.confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.7 },
+        });
+      } catch {
+        // Si el confetti falla, igual redirigimos (abajo)
+      }
+
+      // Espera para que se vea la celebración, luego navega
+      setTimeout(() => {
+        if (targetBlank) {
+          window.open(href, "_blank", "noopener");
+        } else {
+          window.location.href = href;
+        }
+      }, 800);
+    });
+  });
+</script>
+
+<style>
+  .join-section {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+  }
+
+  /* ═══ Hero con Vanta ═══ */
+  .join-hero {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-gunmetal); /* respaldo mientras carga Vanta */
+  }
+  /* Textos claros sobre el fondo oscuro */
+  #vanta-hero .join-h1 {
+    color: white;
+  }
+  #vanta-hero .join-sub {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .status--open {
+    background: rgba(1, 164, 153, 0.18);
+    color: #5fe0d4;
+    border: 1px solid rgba(1, 164, 153, 0.4);
+  }
+  .status--closed {
+    background: rgba(196, 204, 214, 0.15);
+    color: #c4ccd6;
+    border: 1px solid rgba(196, 204, 214, 0.3);
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .status--open .status-dot {
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  .join-h1 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+  }
+  .join-sub {
+    font-size: 1.15rem;
+    line-height: 1.65;
+    max-width: 560px;
+    margin: 0 auto 2.25rem;
+  }
+  .join-hero-cta {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+  }
+
+  /* ═══ Beneficios ═══ */
+  .benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 28px;
+  }
+  .benefit-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--color-ieee-blue) 12%, transparent);
+    margin-bottom: 16px;
+  }
+  .benefit-icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+  /* Íconos: invertir a blanco en modo oscuro para que se vean */
+  :global([data-theme="dark"]) .benefit-icon img {
+    filter: brightness(0) invert(1);
+  }
+  .benefit-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--hero-text);
+    margin-bottom: 8px;
+  }
+  .benefit-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--hero-text-muted);
+  }
+
+  /* ═══ Tipos de membresía ═══ */
+  .tiers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    align-items: stretch;
+  }
+  @media (max-width: 768px) {
+    .tiers-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .tier {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    border-radius: 22px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 12%, transparent);
+    background: color-mix(in srgb, var(--hero-text) 3%, transparent);
+  }
+  /* Card destacada: escala + borde brillante */
+  .tier--featured {
+    border: 2px solid transparent;
+    background:
+      linear-gradient(
+          color-mix(in srgb, var(--color-ieee-blue) 7%, var(--hero-bg)),
+          color-mix(in srgb, var(--color-ieee-blue) 7%, var(--hero-bg))
+        )
+        padding-box,
+      linear-gradient(135deg, var(--color-ieee-blue), var(--color-teal)) border-box;
+    box-shadow: 0 24px 60px -30px color-mix(in srgb, var(--color-ieee-blue) 60%, transparent);
+  }
+  @media (min-width: 769px) {
+    .tier--featured {
+      transform: scale(1.04);
+    }
+  }
+  /* Tag RECOMENDADO con degradado azul→teal */
+  .tier-badge {
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 20px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--color-ieee-blue), var(--color-teal));
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--color-ieee-blue) 60%, transparent);
+  }
+  .tier-name {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--hero-text);
+  }
+  .tier-tag {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-ieee-blue);
+    margin: 4px 0 20px;
+  }
+  .tier-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+    flex: 1;
+  }
+  .tier-list li {
+    position: relative;
+    padding-left: 26px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--hero-text-muted);
+  }
+  .tier-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--color-teal);
+    font-weight: 700;
+  }
+
+  /* ═══ FAQ ═══ */
+  /* ═══ FAQ + foto ═══ */
+  .faq-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .faq-layout {
+      grid-template-columns: 1fr;
+    }
+    /* La foto va arriba en móvil */
+    .faq-photo {
+      order: -1;
+    }
+  }
+  .faq-photo {
+    border-radius: 18px;
+    overflow: hidden;
+    height: 100%;
+    min-height: 320px;
+  }
+  .faq-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .faq {
+    border: 1px solid color-mix(in srgb, var(--hero-text) 12%, transparent);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--hero-text);
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq-q::-webkit-details-marker {
+    display: none;
+  }
+  .faq-chevron {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--hero-text-muted);
+    transition: transform 0.25s ease;
+  }
+  .faq[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+  .faq-a {
+    padding: 0 20px 18px;
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--hero-text-muted);
+  }
+
+  /* ═══ CTA final ═══ */
+  .join-final {
+    background: linear-gradient(120deg, var(--color-ieee-blue), var(--color-icesi-deep));
+  }
+  .join-final-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    color: white;
+    margin-bottom: 0.75rem;
+  }
+  .join-final-sub {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .status--open .status-dot {
+      animation: none;
+    }
+  }
+</style>
