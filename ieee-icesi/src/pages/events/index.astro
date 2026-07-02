@@ -324,16 +324,20 @@ const modalities = [...new Set(events.map((e) => e.modality).filter(Boolean))] a
   /* ===== Buscador + chips ===== */
   .ev-controls {
     position: sticky;
-    top: 66px;
+    /* La altura real del header (anuncios + navbar) la mide el JS y la
+       expone como --ev-sticky-top; 110px es solo un fallback razonable. */
+    top: var(--ev-sticky-top, 110px);
     z-index: 30;
-    padding: 14px 0;
+    padding: 16px 0;
     backdrop-filter: blur(10px);
+    background-color: var(--hero-bg);
   }
   .ev-controls-row {
     display: flex;
     gap: 14px;
     align-items: center;
     flex-wrap: wrap;
+    padding: 4px 0;
   }
   .ev-search {
     position: relative;
@@ -521,6 +525,21 @@ const modalities = [...new Set(events.map((e) => e.modality).filter(Boolean))] a
     activeFilter = chip.dataset.filter || "all";
     applyFilters();
   });
+
+  // === Offset sticky del buscador = altura real del header ===
+  // El header (anuncios + navbar) cambia de alto según viewport y según
+  // si la barra de anuncios está cerrada. Medimos y lo exponemos como var.
+  const mainHeader = document.getElementById("main-header");
+  const updateStickyTop = () => {
+    if (!mainHeader) return;
+    const h = Math.round(mainHeader.getBoundingClientRect().height);
+    document.documentElement.style.setProperty("--ev-sticky-top", `${h}px`);
+  };
+  updateStickyTop();
+  window.addEventListener("resize", updateStickyTop, { passive: true });
+  if (mainHeader && "ResizeObserver" in window) {
+    new ResizeObserver(updateStickyTop).observe(mainHeader);
+  }
 
   document.querySelectorAll<HTMLElement>("[data-carousel-section]").forEach((section) => {
     const carousel = section.querySelector<HTMLElement>("[data-carousel]");

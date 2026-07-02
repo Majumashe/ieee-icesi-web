@@ -1,0 +1,188 @@
+---
+/**
+ * SECCIÓN MEMBRESÍA + MERCH — IEEE ICESI
+ * Beneficios de miembro con las camisetas oficiales (frente + espalda)
+ * flotando. Respeta prefers-reduced-motion.
+ * By: Majumashe - WebMaster 2026
+ */
+
+// Camisetas oficiales (frente + espalda)
+import camisetaFrente from "../../assets/images/camiseta-frente.png";
+import camisetaEspalda from "../../assets/images/camiseta-espalda.png";
+---
+
+<section class="merch">
+  <div class="mx-auto max-w-screen-xl px-6 py-16 lg:px-12">
+    <div class="merch-grid">
+      <!-- Texto -->
+      <div class="merch-copy">
+        <div class="mb-6 border-l-[3px] border-ieee-blue pl-3">
+          <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+            Membresía IEEE · 2026–2027
+          </span>
+        </div>
+        <h2 class="merch-title">Beneficios miembros</h2>
+        <p class="merch-text">
+          Como miembro obtienes acceso a muchísimo más de lo que imaginas — recursos globales, becas,
+          eventos y el respaldo de tu perfil profesional.
+        </p>
+        <p class="merch-highlight">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path
+              d="M20 12v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-8M2 7h20v4H2zM12 21V7M12 7H8.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h3.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"
+              stroke-linecap="round"
+              stroke-linejoin="round"></path>
+          </svg>
+          Descuentos en merch + regalos de bienvenida
+        </p>
+      </div>
+
+      <!-- Camisetas flotando -->
+      <div class="tshirts">
+        <span class="tshirt-glow" aria-hidden="true"></span>
+        <img
+          class="tshirt tshirt--back"
+          src={camisetaEspalda.src}
+          alt="Camiseta oficial de la Rama IEEE ICESI — vista de la espalda"
+          loading="lazy"
+          decoding="async"
+        />
+        <img
+          class="tshirt tshirt--front"
+          src={camisetaFrente.src}
+          alt="Camiseta oficial de la Rama IEEE ICESI — vista frontal"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .merch {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+    overflow: hidden;
+  }
+  .merch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .merch-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+
+  /* ── Texto ── */
+  .merch-title {
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--hero-text);
+    margin-bottom: 1rem;
+  }
+  .merch-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--hero-text-muted);
+    max-width: 520px;
+    margin-bottom: 1.75rem;
+  }
+  .merch-highlight {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--hero-text);
+    background: color-mix(in srgb, var(--color-teal) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-teal) 35%, transparent);
+  }
+  .merch-highlight svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--color-teal);
+  }
+
+  /* ── Camisetas flotando ── */
+  .tshirts {
+    position: relative;
+    min-height: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  @media (max-width: 900px) {
+    .tshirts {
+      min-height: 380px;
+    }
+  }
+  .tshirt-glow {
+    position: absolute;
+    width: 75%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--color-ieee-blue) 45%, transparent),
+      transparent 70%
+    );
+    filter: blur(45px);
+    z-index: 0;
+  }
+  .tshirt {
+    position: absolute;
+    width: 58%;
+    max-width: 300px;
+    filter: drop-shadow(0 30px 45px rgba(0, 0, 0, 0.35));
+    will-change: transform;
+  }
+  .tshirt--back {
+    left: 6%;
+    top: 8%;
+    z-index: 1;
+    animation: float-back 6s ease-in-out infinite;
+  }
+  .tshirt--front {
+    right: 6%;
+    bottom: 6%;
+    z-index: 2;
+    animation: float-front 6s ease-in-out infinite;
+  }
+  @keyframes float-back {
+    0%,
+    100% {
+      transform: rotate(-7deg) translateY(0);
+    }
+    50% {
+      transform: rotate(-7deg) translateY(-16px);
+    }
+  }
+  @keyframes float-front {
+    0%,
+    100% {
+      transform: rotate(6deg) translateY(0);
+    }
+    50% {
+      transform: rotate(6deg) translateY(14px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tshirt--back {
+      transform: rotate(-7deg);
+      animation: none;
+    }
+    .tshirt--front {
+      transform: rotate(6deg);
+      animation: none;
+    }
+  }
+</style>
