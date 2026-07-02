@@ -1,0 +1,73 @@
+---
+/**
+ * PÁGINA 404 — IEEE ICESI
+ * Astro la muestra automáticamente cuando una URL no existe.
+ * Guardar como: src/pages/404.astro
+ *
+ * IMAGEN: pon la ilustración de Andy con el 404 en:
+ *   public/andy/andy-404.png  (o ajusta la ruta abajo)
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+import Layout from "../layouts/Layout.astro";
+import Button from "../components/ui/Button.astro";
+---
+
+<Layout title="Página no encontrada" description="La página que buscas no existe.">
+  <section class="notfound">
+    <div class="notfound-inner">
+      <img
+        src="/andy/andy-404.png"
+        alt="Andy no encuentra la página (error 404)"
+        class="notfound-img"
+      />
+      <h1 class="notfound-title">¡Uy! Andy no encuentra esta página</h1>
+      <p class="notfound-text">
+        Puede que el enlace esté roto o que la página se haya movido. Pero
+        tranquilo, Andy te lleva de vuelta a casa.
+      </p>
+      <div class="notfound-cta">
+        <Button href="/" variant="hero">Volver al inicio</Button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .notfound {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 1.5rem;
+  }
+  .notfound-inner {
+    max-width: 560px;
+    text-align: center;
+  }
+  .notfound-img {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    margin: 0 auto 2rem;
+  }
+  .notfound-title {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+    font-weight: 700;
+    color: var(--hero-text);
+    margin-bottom: 1rem;
+  }
+  .notfound-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--hero-text-muted);
+    margin-bottom: 2rem;
+  }
+  .notfound-cta {
+    display: flex;
+    justify-content: center;
+  }
+</style>

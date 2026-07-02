@@ -1,0 +1,128 @@
+---
+/**
+ * EVENT PERKS — IEEE ICESI
+ * Sección "¿por qué venir a los eventos?" con Andy. 3 columnas
+ * (título · Andy · texto corto) sobre fondo oscuro, estilo la referencia.
+ * Fondo oscuro FIJO (no cambia con el tema) para que Andy resalte.
+ *
+ * ─────────────────────────────────────────────────────────────
+ * IMÁGENES DE ANDY (PNG con fondo transparente, en public/andy/):
+ *   - andy-snacks.png    (Andy comiendo / con café)
+ *   - andy-premios.png   (Andy con un regalo / celebrando)
+ *   - andy-puntos.png    (Andy con trofeo / marcador de puntos)
+ * ─────────────────────────────────────────────────────────────
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+const perks = [
+  {
+    img: "/andy/andy-snacks.png",
+    alt: "Andy con snacks y café",
+    title: "Siempre hay con qué picar",
+    text: "Snacks y café gratis en cada evento. Porque nadie aprende con hambre.",
+  },
+  {
+    img: "/andy/andy-premios.png",
+    alt: "Andy celebrando con un premio",
+    title: "Te puedes ir con premio",
+    text: "Rifas y sorpresas en nuestros eventos. Asiste y quizás la suerte te sonría.",
+  },
+  {
+    img: "/andy/andy-puntos.png",
+    alt: "Andy sumando puntos",
+    title: "Asiste, suma, gana",
+    text: "Los miembros ganan puntos por cada evento al que asisten. Acumúlalos y canjéalos por premios exclusivos.",
+  },
+];
+---
+
+<section class="perks">
+  <div class="mx-auto max-w-screen-xl px-6 py-20 lg:px-12">
+    <h2 class="perks-title">¿Por qué no querrías venir?</h2>
+
+    <div class="perks-grid">
+      {
+        perks.map((perk) => (
+          <div class="perk">
+            <div class="perk-img">
+              <img src={perk.img} alt={perk.alt} loading="lazy" decoding="async" />
+            </div>
+            <h3 class="perk-heading">{perk.title}</h3>
+            <p class="perk-text">{perk.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Fondo oscuro fijo (no cambia con el tema) */
+  .perks {
+    background: var(--color-gunmetal);
+  }
+  .perks-title {
+    text-align: center;
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 700;
+    color: white;
+    margin-bottom: 60px;
+  }
+
+  .perks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  @media (max-width: 768px) {
+    .perks-grid {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+  }
+
+  .perk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .perk-img {
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+  .perk-img img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+  }
+  /* Andy "salta" un poco al pasar el mouse */
+  .perk:hover .perk-img img {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+
+  .perk-heading {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 10px;
+  }
+  .perk-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 300px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .perk:hover .perk-img img {
+      transform: none;
+    }
+  }
+</style>
