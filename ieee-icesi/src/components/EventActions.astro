@@ -1,0 +1,201 @@
+---
+/**
+ * EVENT ACTIONS — IEEE ICESI
+ * Botones de compartir (WhatsApp, X, copiar link) + exportar a calendario
+ * (Google Calendar y descarga .ics). Va en la página individual del evento.
+ *
+ * Props:
+ *   event → EventItem (usa title, date, location, description, slug)
+ *   siteUrl? → dominio del sitio para armar el enlace a compartir
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+import type { EventItem } from "../data/events";
+import Button from "./ui/Button.astro";
+
+interface Props {
+  event: EventItem;
+  siteUrl?: string;
+}
+
+// CAMBIA esto por tu dominio real cuando publiques
+const { event, siteUrl = "https://ieee-icesi.org" } = Astro.props;
+
+const eventUrl = `${siteUrl}/events/${event.slug}`;
+
+// --- Enlaces de compartir ---
+const shareText = `¡No te pierdas "${event.title}" de IEEE ICESI!`;
+const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareText + " " + eventUrl)}`;
+const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(eventUrl)}`;
+
+// --- Enlace de Google Calendar ---
+// Formato de fecha para Google: AAAAMMDDTHHMMSS (asumimos 2h de duración)
+const start = new Date(event.date);
+const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+const fmtG = (d: Date) =>
+  d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+const googleCalUrl =
+  `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+  `&text=${encodeURIComponent(event.title)}` +
+  `&dates=${fmtG(start)}/${fmtG(end)}` +
+  `&details=${encodeURIComponent(event.description + "\n\n" + eventUrl)}` +
+  `&location=${encodeURIComponent(event.location)}`;
+---
+
+<div class="actions">
+  <!-- Compartir -->
+  <div class="actions-group">
+    <span class="actions-label">Compartir</span>
+    <div class="actions-btns">
+      <a href={whatsappUrl} target="_blank" rel="noopener" class="action-btn" aria-label="Compartir en WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm0 18.15h-.01c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.23 8.23 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42-.14 0-.31-.02-.47-.02-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/></svg>
+      </a>
+      <a href={twitterUrl} target="_blank" rel="noopener" class="action-btn" aria-label="Compartir en X">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 2h3.3l-7.2 8.3L23.5 22h-6.6l-5.2-6.8L5.7 22H2.4l7.7-8.8L1.5 2h6.8l4.7 6.2L18.9 2zm-1.2 18h1.8L7.1 3.8H5.2L17.7 20z"/></svg>
+      </a>
+      <button class="action-btn" data-copy-link data-url={eventUrl} aria-label="Copiar enlace">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
+        <span data-copy-label>Copiar</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Añadir a calendario -->
+  <div class="actions-group">
+    <span class="actions-label">Añadir a calendario</span>
+    <div class="actions-btns">
+      <Button href={googleCalUrl} variant="outline" class="action-btn--wide" target="_blank" rel="noopener">
+        Google Calendar
+      </Button>
+      <Button
+        variant="outline"
+        class="action-btn--wide"
+        data-download-ics
+        data-title={event.title}
+        data-desc={event.description}
+        data-location={event.location}
+        data-start={event.date}
+      >
+        Descargar .ics
+      </Button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    padding: 20px 0;
+    border-top: 1px solid color-mix(in srgb, var(--hero-text) 10%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--hero-text) 10%, transparent);
+    margin: 24px 0;
+  }
+  .actions-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .actions-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-ieee-blue);
+    font-weight: 600;
+  }
+  .actions-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 15%, transparent);
+    background: transparent;
+    color: var(--hero-text);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .action-btn:hover {
+    border-color: var(--color-ieee-blue);
+    color: var(--color-ieee-blue);
+  }
+  .action-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  /* Ancho mínimo para los botones de calendario (que ahora son <Button>) */
+  .action-btn--wide {
+    min-width: 160px;
+  }
+</style>
+
+<script>
+  // --- Copiar enlace ---
+  document.querySelectorAll<HTMLElement>("[data-copy-link]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const url = btn.dataset.url || "";
+      const label = btn.querySelector("[data-copy-label]");
+      try {
+        await navigator.clipboard.writeText(url);
+        if (label) {
+          const original = label.textContent;
+          label.textContent = "¡Copiado!";
+          setTimeout(() => (label.textContent = original), 2000);
+        }
+      } catch {
+        // Si el navegador bloquea el portapapeles, no hace nada grave
+      }
+    });
+  });
+
+  // --- Descargar .ics ---
+  document.querySelectorAll<HTMLElement>("[data-download-ics]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const title = btn.dataset.title || "Evento";
+      const desc = btn.dataset.desc || "";
+      const location = btn.dataset.location || "";
+      const start = new Date(btn.dataset.start || "");
+      const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+      const fmt = (d: Date) =>
+        d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+
+      // Formato estándar iCalendar (.ics)
+      const ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//IEEE ICESI//Eventos//ES",
+        "BEGIN:VEVENT",
+        `UID:${Date.now()}@ieee-icesi`,
+        `DTSTAMP:${fmt(new Date())}`,
+        `DTSTART:${fmt(start)}`,
+        `DTEND:${fmt(end)}`,
+        `SUMMARY:${title}`,
+        `DESCRIPTION:${desc}`,
+        `LOCATION:${location}`,
+        "END:VEVENT",
+        "END:VCALENDAR",
+      ].join("\r\n");
+
+      const blob = new Blob([ics], { type: "text/calendar" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${title.replace(/\s+/g, "-").toLowerCase()}.ics`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  });
+</script>

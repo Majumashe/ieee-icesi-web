@@ -1,0 +1,467 @@
+---
+/**
+ * PÁGINA DE EVENTOS — /events
+ * Banner destacado (Arduino) · Header con foto de fondo + stats ·
+ * buscador · filtros por chips · carruseles horizontales.
+ * Guardar como: src/pages/events/index.astro
+ * By: Majumashe - WebMaster 2026
+ */
+
+import Layout from "../../layouts/Layout.astro";
+import EventCard from "../../components/cards/EventCard.astro";
+import FeaturedEventBanner from "../../components/FeaturedEventBanner.astro";
+import { events, getUpcomingEvents, getPastEvents } from "../../data/events";
+
+const upcoming = getUpcomingEvents();
+const past = getPastEvents();
+
+// Evento destacado para el banner (Arduino)
+const featured = events.find((e) => e.slug === "taller-arduino");
+
+// Stats del header
+const statUpcoming = upcoming.length;
+const statPast = past.length;
+const statRegistered = events.reduce((sum, e) => sum + (e.registered || 0), 0);
+
+// Chips de filtro
+const types = [...new Set(events.map((e) => e.type).filter(Boolean))] as string[];
+const modalities = [
+  ...new Set(events.map((e) => e.modality).filter(Boolean)),
+] as string[];
+---
+
+<Layout
+  title="Eventos"
+  description="Todos los eventos de la Rama Estudiantil IEEE de la Universidad ICESI: talleres, charlas, hackathons y más."
+>
+  <!-- HEADER con foto de fondo + stats -->
+  <section class="ev-hero">
+    <!-- Foto de fondo + overlay para legibilidad -->
+    <div class="ev-hero-bg" aria-hidden="true"></div>
+    <div class="ev-hero-overlay" aria-hidden="true"></div>
+
+    <div class="relative z-10 mx-auto max-w-screen-xl px-6 py-16 lg:px-12">
+      <div class="ev-hero-grid">
+        <div>
+          <div class="mb-4 border-l-[3px] border-white pl-3">
+            <span class="text-xs font-medium tracking-[1.5px] text-white uppercase">
+              Agenda 2026
+            </span>
+          </div>
+          <h1 class="ev-h1 text-4xl font-bold tracking-tight lg:text-5xl">
+            Eventos de la Rama
+          </h1>
+          <p class="ev-intro mt-4 max-w-xl text-lg leading-relaxed">
+            Conferencias, talleres, hackathons y más. Descubre lo que viene y
+            revive lo que ya hicimos juntos.
+          </p>
+        </div>
+
+        <div class="ev-stats">
+          <div class="ev-stat">
+            <span class="ev-stat-num">{statUpcoming}</span>
+            <span class="ev-stat-label">Próximos</span>
+          </div>
+          <div class="ev-stat">
+            <span class="ev-stat-num">{statRegistered}</span>
+            <span class="ev-stat-label">Inscritos</span>
+          </div>
+          <div class="ev-stat">
+            <span class="ev-stat-num">{statPast}</span>
+            <span class="ev-stat-label">Realizados</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- BUSCADOR + FILTROS -->
+  <section class="ev-controls">
+    <div class="mx-auto max-w-screen-xl px-6 lg:px-12">
+      <div class="ev-controls-row">
+        <div class="ev-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="search"
+            id="ev-search"
+            placeholder="Buscar por título, ponente o lugar…"
+            aria-label="Buscar eventos"
+          />
+        </div>
+        <div class="ev-chips" id="ev-chips">
+          <button class="ev-chip is-active" data-filter="all">Todos</button>
+          {types.map((t) => (
+            <button class="ev-chip" data-filter={`type:${t}`}>{t}</button>
+          ))}
+          {modalities.map((m) => (
+            <button class="ev-chip" data-filter={`modality:${m}`}>{m}</button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRÓXIMOS (carrusel horizontal) -->
+  {
+    upcoming.length > 0 && (
+      <section class="ev-section" data-carousel-section>
+        <div class="mx-auto max-w-screen-xl px-6 lg:px-12">
+          <div class="ev-section-head">
+            <h2 class="ev-section-title">Próximos eventos</h2>
+            <div class="ev-arrows">
+              <button class="ev-arrow" data-scroll="prev" aria-label="Anterior">‹</button>
+              <button class="ev-arrow" data-scroll="next" aria-label="Siguiente">›</button>
+            </div>
+          </div>
+          <div class="ev-carousel ieee-scroll" data-carousel>
+            {upcoming.map((event) => (
+              <div
+                class="ev-carousel-item"
+                data-event
+                data-type={event.type || ""}
+                data-modality={event.modality || ""}
+                data-search={`${event.title} ${event.location} ${event.speaker?.name || ""}`.toLowerCase()}
+              >
+                <EventCard event={event} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+    <!-- BANNER DESTACADO (Arduino) -->
+  {
+    featured && (
+      <div class="mx-auto max-w-screen-xl px-6 py-10 lg:px-12">
+        <FeaturedEventBanner event={featured} />
+      </div>
+    )
+  }
+
+
+  <!-- PASADOS (carrusel horizontal) -->
+  {
+    past.length > 0 && (
+      <section class="ev-section" data-carousel-section>
+        <div class="mx-auto max-w-screen-xl px-6 lg:px-12">
+          <div class="ev-section-head">
+            <h2 class="ev-section-title">Eventos pasados</h2>
+            <div class="ev-arrows">
+              <button class="ev-arrow" data-scroll="prev" aria-label="Anterior">‹</button>
+              <button class="ev-arrow" data-scroll="next" aria-label="Siguiente">›</button>
+            </div>
+          </div>
+          <div class="ev-carousel ieee-scroll" data-carousel>
+            {past.map((event) => (
+              <div
+                class="ev-carousel-item"
+                data-event
+                data-type={event.type || ""}
+                data-modality={event.modality || ""}
+                data-search={`${event.title} ${event.location} ${event.speaker?.name || ""}`.toLowerCase()}
+              >
+                <EventCard event={event} isPast />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <div id="ev-empty" class="ev-empty" hidden>
+    No hay eventos que coincidan con tu búsqueda.
+  </div>
+</Layout>
+
+<style>
+  .ev-controls,
+  .ev-section {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+  }
+
+  /* ===== HERO con foto de fondo ===== */
+  .ev-hero {
+    position: relative;
+    overflow: hidden;
+  }
+  .ev-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    /* CAMBIA esta ruta por tu foto: public/events/hero-eventos.jpg */
+    background-image: url("/events/hero-eventos.jpg");
+    background-size: cover;
+    background-position: center;
+  }
+  /* Overlay oscuro para que el texto blanco se lea sobre la foto */
+  .ev-hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      120deg,
+      rgba(0, 38, 60, 0.88),
+      rgba(0, 98, 155, 0.72) 60%,
+      rgba(1, 164, 153, 0.6)
+    );
+  }
+  /* Textos del hero ahora en blanco (van sobre la foto oscurecida) */
+  .ev-h1 {
+    color: white;
+  }
+  .ev-intro {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .ev-hero-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 28px;
+  }
+  .ev-stats {
+    display: flex;
+    gap: 12px;
+  }
+  .ev-stat {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    min-width: 100px;
+  }
+  .ev-stat-num {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+    color: white;
+  }
+  .ev-stat-label {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* ===== Buscador + chips ===== */
+  .ev-controls {
+    position: sticky;
+    top: 66px;
+    z-index: 30;
+    padding: 14px 0;
+    backdrop-filter: blur(10px);
+  }
+  .ev-controls-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .ev-search {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+    max-width: 400px;
+  }
+  .ev-search svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--hero-text-muted);
+  }
+  .ev-search input {
+    width: 100%;
+    padding: 11px 14px 11px 40px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 15%, transparent);
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--hero-bg);
+    color: var(--hero-text);
+    outline: none;
+  }
+  .ev-search input:focus {
+    border-color: var(--color-ieee-blue);
+  }
+  .ev-chips {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .ev-chip {
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 15%, transparent);
+    background: transparent;
+    color: var(--hero-text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .ev-chip:hover {
+    border-color: var(--color-ieee-blue);
+  }
+  .ev-chip.is-active {
+    background: var(--color-ieee-blue);
+    border-color: var(--color-ieee-blue);
+    color: white;
+  }
+
+  /* ===== Secciones y carruseles ===== */
+  .ev-section {
+    padding: 22px 0 8px;
+  }
+  .ev-section-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .ev-section-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--hero-text);
+  }
+  .ev-arrows {
+    margin-left: auto;
+    display: flex;
+    gap: 9px;
+  }
+  .ev-arrow {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 15%, transparent);
+    background: var(--hero-bg);
+    color: var(--hero-text);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .ev-arrow:hover {
+    background: var(--color-ieee-blue);
+    color: white;
+    border-color: var(--color-ieee-blue);
+  }
+
+  .ev-carousel {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    padding: 6px 2px 20px;
+    scroll-snap-type: x mandatory;
+    align-items: stretch;
+  }
+  .ev-carousel-item {
+    flex: 0 0 320px;
+    scroll-snap-align: start;
+    display: flex;
+  }
+  .ev-carousel-item > * {
+    width: 100%;
+  }
+
+  .ieee-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--hero-text) 25%, transparent) transparent;
+  }
+  .ieee-scroll::-webkit-scrollbar {
+    height: 8px;
+  }
+  .ieee-scroll::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--hero-text) 22%, transparent);
+    border-radius: 99px;
+  }
+
+  .ev-empty {
+    max-width: 1280px;
+    margin: 0 auto 60px;
+    padding: 40px;
+    text-align: center;
+    color: var(--hero-text-muted);
+    font-size: 14px;
+    border: 1px dashed color-mix(in srgb, var(--hero-text) 20%, transparent);
+    border-radius: 14px;
+  }
+</style>
+
+<script>
+  const search = document.getElementById("ev-search") as HTMLInputElement;
+  const chipsBox = document.getElementById("ev-chips");
+  const items = [...document.querySelectorAll<HTMLElement>("[data-event]")];
+  const empty = document.getElementById("ev-empty");
+  const sections = [...document.querySelectorAll<HTMLElement>("[data-carousel-section]")];
+
+  let activeFilter = "all";
+  let query = "";
+
+  const applyFilters = () => {
+    let visibleCount = 0;
+    items.forEach((item) => {
+      const type = item.dataset.type || "";
+      const modality = item.dataset.modality || "";
+      const searchText = item.dataset.search || "";
+
+      let matchesChip = activeFilter === "all";
+      if (activeFilter.startsWith("type:")) {
+        matchesChip = type === activeFilter.slice(5);
+      } else if (activeFilter.startsWith("modality:")) {
+        matchesChip = modality === activeFilter.slice(9);
+      }
+      const matchesSearch = query === "" || searchText.includes(query);
+      const show = matchesChip && matchesSearch;
+      item.style.display = show ? "" : "none";
+      if (show) visibleCount++;
+    });
+
+    sections.forEach((sec) => {
+      const anyVisible = [...sec.querySelectorAll<HTMLElement>("[data-event]")].some(
+        (i) => i.style.display !== "none",
+      );
+      sec.style.display = anyVisible ? "" : "none";
+    });
+
+    if (empty) empty.hidden = visibleCount > 0;
+  };
+
+  search?.addEventListener("input", () => {
+    query = search.value.trim().toLowerCase();
+    applyFilters();
+  });
+
+  chipsBox?.addEventListener("click", (e) => {
+    const chip = (e.target as HTMLElement).closest<HTMLElement>(".ev-chip");
+    if (!chip) return;
+    chipsBox.querySelectorAll(".ev-chip").forEach((c) => c.classList.remove("is-active"));
+    chip.classList.add("is-active");
+    activeFilter = chip.dataset.filter || "all";
+    applyFilters();
+  });
+
+  document.querySelectorAll<HTMLElement>("[data-carousel-section]").forEach((section) => {
+    const carousel = section.querySelector<HTMLElement>("[data-carousel]");
+    const prev = section.querySelector<HTMLElement>('[data-scroll="prev"]');
+    const next = section.querySelector<HTMLElement>('[data-scroll="next"]');
+    if (!carousel) return;
+    const amount = 340;
+    prev?.addEventListener("click", () => carousel.scrollBy({ left: -amount, behavior: "smooth" }));
+    next?.addEventListener("click", () => carousel.scrollBy({ left: amount, behavior: "smooth" }));
+  });
+</script>

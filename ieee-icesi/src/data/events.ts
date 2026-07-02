@@ -54,6 +54,12 @@ export interface EventItem {
   capacity?: number;
   registerUrl?: string;
   rating?: number; // 1-5, para eventos pasados (manual, sale de encuestas)
+  registered?: number; // inscritos actuales (manual, para la stat del header)
+  // Banners para el componente destacado (imágenes que hace marketing):
+  //   Desktop 1920×480 px · Móvil 1080×1080 px · JPG/PNG/WebP < 300 KB
+  //   Van en public/banners/. Dejar zona despejada para countdown + botón.
+  bannerDesktop?: string; // ej. "/banners/hackathon-desktop.jpg"
+  bannerMobile?: string; // ej. "/banners/hackathon-movil.jpg"
 }
 
 // ⚠️ Estos son eventos de EJEMPLO. Reemplázalos por los reales.
@@ -104,6 +110,8 @@ export const events: EventItem[] = [
     organizers: ["cs"],
     capacity: 30,
     registerUrl: "https://forms.gle/ejemplo",
+     bannerDesktop: "/banners/arduino-desktop.png",   // Evento destacdo
+  bannerMobile: "/banners/arduino-movil.png",      
   },
   // ── Eventos pasados de ejemplo (fecha anterior a hoy) ──
   {

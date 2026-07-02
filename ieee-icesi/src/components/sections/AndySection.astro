@@ -1,0 +1,120 @@
+---
+/**
+ * ANDY SECTION — IEEE ICESI
+ * Mosaico alternado a TODO EL ANCHO (edge-to-edge), sin espacios entre cuadros.
+ * Se intercalan cuadros con imagen de Andy y cuadros de color con texto corto.
+ * El encabezado respeta el tema; los cuadros de color son de marca (fijos).
+ *
+ * ─────────────────────────────────────────────────────────────
+ * IMÁGENES DE ANDY (van en public/andy/):
+ *   - andy-proyectos.png · andy-eventos.png · andy-comunidad.png
+ * ─────────────────────────────────────────────────────────────
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+const cells = [
+  { type: "img", img: "/andy/andy-proyectos.png", alt: "Andy soldando en el taller" },
+  { type: "text", text: "Construimos cosas reales", bg: "var(--color-ieee-blue)" },
+  { type: "img", img: "/andy/andy-eventos.png", alt: "Andy presentando con micrófono" },
+  { type: "text", text: "Vivimos la ingeniería", bg: "var(--color-teal)" },
+  { type: "img", img: "/andy/andy-comunidad.png", alt: "Andy celebrando con la comunidad" },
+  { type: "text", text: "Somos una familia", bg: "var(--color-icesi-deep)" },
+];
+---
+
+<section class="andy-section">
+  <!-- Encabezado (respeta el tema) -->
+  <div class="andy-head">
+    <div class="mx-auto max-w-screen-xl px-6 py-16 text-center lg:px-12">
+      <div class="mb-4 inline-block border-l-[3px] border-ieee-blue pl-3 text-left">
+        <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+          Qué hacemos
+        </span>
+      </div>
+      <h2 class="andy-title text-3xl font-bold tracking-tight lg:text-4xl">
+        Esto es IEEE ICESI
+      </h2>
+    </div>
+  </div>
+
+  <!-- Mosaico edge-to-edge, sin espacios -->
+  <div class="andy-mosaic">
+    {
+      cells.map((cell) =>
+        cell.type === "img" ? (
+          <div class="andy-cell andy-cell--img">
+            <img src={cell.img} alt={cell.alt} loading="lazy" decoding="async" />
+          </div>
+        ) : (
+          <div class="andy-cell andy-cell--text" style={`background:${cell.bg}`}>
+            <span>{cell.text}</span>
+          </div>
+        ),
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .andy-head {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+  }
+  .andy-title {
+    color: var(--hero-text);
+  }
+
+  /* Tablero 3 columnas, a todo el ancho, SIN gap */
+  .andy-mosaic {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    width: 100%;
+  }
+
+  .andy-cell {
+    aspect-ratio: 1;
+    overflow: hidden;
+  }
+
+  /* Celda de imagen */
+  .andy-cell--img img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .andy-cell--img:hover img {
+    transform: scale(1.05);
+  }
+
+  /* Celda de color con texto corto */
+  .andy-cell--text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .andy-cell--text span {
+    color: white;
+    font-size: clamp(20px, 2.4vw, 30px);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  /* Responsive: en móvil, 2 columnas */
+  @media (max-width: 767px) {
+    .andy-mosaic {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .andy-cell--img:hover img {
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,187 @@
+---
+/**
+ * FEATURED EVENT BANNER — IEEE ICESI
+ * Banner ancho de un evento destacado. La IMAGEN es el banner completo
+ * (la diseña marketing). TODO el banner es clickeable y lleva a la página
+ * del evento. Encima solo va el countdown (esquina inferior derecha).
+ *
+ * ─────────────────────────────────────────────────────────────
+ * IMÁGENES (las hace marketing, van en public/banners/):
+ *   - Desktop: 1920 × 480 px  (horizontal 4:1)
+ *   - Móvil:   1080 × 1080 px (cuadrado)
+ *   - Formato JPG/PNG/WebP, < 300 KB, con zona despejada abajo-derecha
+ *     (para el countdown).
+ * ─────────────────────────────────────────────────────────────
+ *
+ * Props:
+ *   event → un EventItem con bannerDesktop, bannerMobile, date, slug
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+import type { EventItem } from "../data/events";
+
+interface Props {
+  event: EventItem;
+}
+
+const { event } = Astro.props;
+---
+
+<a
+  href={`/events/${event.slug}`}
+  class="banner"
+  data-banner-date={event.date}
+  aria-label={`Ver detalles de ${event.title}`}
+>
+  <!-- Imagen del banner (móvil vs desktop) -->
+  <picture>
+    {
+      event.bannerMobile && (
+        <source media="(max-width: 767px)" srcset={event.bannerMobile} />
+      )
+    }
+    <img
+      src={event.bannerDesktop || event.bannerMobile}
+      alt={event.title}
+      class="banner-img"
+      loading="lazy"
+    />
+  </picture>
+
+  <!-- Countdown: esquina inferior derecha -->
+  <div class="banner-countdown" data-countdown>
+    <div class="cd-unit"><span data-days>0</span><small>días</small></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span data-hours>00</span><small>horas</small></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span data-mins>00</span><small>min</small></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-unit"><span data-secs>00</span><small>seg</small></div>
+  </div>
+</a>
+
+<style>
+  .banner {
+    position: relative;
+    display: block;
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 1920 / 480;
+    cursor: pointer;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+  /* Al pasar el mouse, el banner se eleva sutilmente (indica que es clickeable) */
+  .banner:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 44px -20px rgba(0, 0, 0, 0.5);
+  }
+  /* En móvil, la proporción cambia a cuadrada */
+  @media (max-width: 767px) {
+    .banner {
+      aspect-ratio: 1 / 1;
+    }
+  }
+
+  .banner-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    transition: transform 0.4s ease;
+  }
+  .banner:hover .banner-img {
+    transform: scale(1.02);
+  }
+
+  /* Countdown: esquina inferior derecha */
+  .banner-countdown {
+    position: absolute;
+    bottom: 18px;
+    right: 32px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(14, 17, 19, 0.55);
+    backdrop-filter: blur(6px);
+  }
+  .cd-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 40px;
+  }
+  .cd-unit span {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1;
+    color: white;
+    font-variant-numeric: tabular-nums;
+  }
+  .cd-unit small {
+    margin-top: 3px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .cd-sep {
+    font-size: 22px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .banner:hover {
+      transform: none;
+    }
+    .banner:hover .banner-img {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  const banner = document.querySelector<HTMLElement>("[data-banner-date]");
+  if (banner) {
+    const target = new Date(banner.dataset.bannerDate || "").getTime();
+    const cd = banner.querySelector("[data-countdown]");
+    const daysEl = cd?.querySelector("[data-days]");
+    const hoursEl = cd?.querySelector("[data-hours]");
+    const minsEl = cd?.querySelector("[data-mins]");
+    const secsEl = cd?.querySelector("[data-secs]");
+
+    const pad = (n: number) => String(n).padStart(2, "0");
+
+    const tick = () => {
+      const diff = target - Date.now();
+      if (diff <= 0) {
+        if (daysEl) daysEl.textContent = "0";
+        if (hoursEl) hoursEl.textContent = "00";
+        if (minsEl) minsEl.textContent = "00";
+        if (secsEl) secsEl.textContent = "00";
+        return;
+      }
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff / 3600000) % 24);
+      const mins = Math.floor((diff / 60000) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+      if (daysEl) daysEl.textContent = String(days);
+      if (hoursEl) hoursEl.textContent = pad(hours);
+      if (minsEl) minsEl.textContent = pad(mins);
+      if (secsEl) secsEl.textContent = pad(secs);
+    };
+
+    tick();
+    setInterval(tick, 1000);
+  }
+</script>

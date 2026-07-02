@@ -11,7 +11,7 @@
 
 interface Props {
   href?: string;
-  variant?: "primary" | "outline" | "nav" | "hero";
+  variant?: "primary" | "outline" | "nav" | "hero" | "light";
   type?: "button" | "submit" | "reset";
   class?: string;
   [key: string]: unknown; // permite atributos extra (aria-*, data-*, id...)
@@ -37,6 +37,8 @@ const variantClasses = {
     "border-2 border-ieee-blue bg-transparent text-ieee-blue hover:bg-ieee-blue hover:text-white focus-visible:ring-ieee-blue/50",
   nav: "bg-ieee-blue text-white hover:bg-icesi-blue focus-visible:ring-white/50",
   hero: "btn-hero border-2 border-ieee-blue bg-ieee-blue text-white focus-visible:ring-ieee-blue/50",
+  light:
+    "bg-white text-ieee-blue hover:bg-off-white focus-visible:ring-white/50",
 };
 
 const classes = [baseClasses, variantClasses[variant], extraClass];
