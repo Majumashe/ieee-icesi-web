@@ -1,0 +1,310 @@
+---
+/**
+ * EVENTS CALENDAR — IEEE ICESI
+ * Vista de calendario mensual con los eventos marcados por día.
+ * Próximos y pasados en colores distintos. Clic en un día con evento
+ * lleva a la página del evento. Navegación entre meses con flechas.
+ *
+ * Props:
+ *   events → array de EventItem
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+import type { EventItem } from "../data/events";
+
+interface Props {
+  events: EventItem[];
+}
+
+const { events } = Astro.props;
+
+// Preparamos los datos que el cliente necesita (fecha, título, slug, estado)
+const now = new Date();
+const calendarData = events.map((e) => ({
+  date: e.date,
+  title: e.title,
+  slug: e.slug,
+  isPast: new Date(e.date) < now,
+}));
+---
+
+<section class="cal-section">
+  <div class="mx-auto max-w-screen-xl px-6 lg:px-12">
+    <div class="cal-head">
+      <h2 class="cal-section-title">Calendario</h2>
+      <div class="cal-nav">
+        <button class="cal-nav-btn" data-cal-prev aria-label="Mes anterior">‹</button>
+        <span class="cal-month-label" data-cal-label>—</span>
+        <button class="cal-nav-btn" data-cal-next aria-label="Mes siguiente">›</button>
+      </div>
+    </div>
+
+    <!-- Leyenda -->
+    <div class="cal-legend">
+      <span class="cal-legend-item"><span class="cal-dot cal-dot--upcoming"></span>Próximo</span>
+      <span class="cal-legend-item"><span class="cal-dot cal-dot--past"></span>Realizado</span>
+    </div>
+
+    <!-- Cabecera de días de la semana -->
+    <div class="cal-weekdays">
+      <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span>
+      <span>Vie</span><span>Sáb</span><span>Dom</span>
+    </div>
+
+    <!-- Cuadrícula del mes (la llena el JS) -->
+    <div class="cal-grid" data-cal-grid></div>
+  </div>
+
+  <!-- Datos de eventos para el cliente -->
+  <script type="application/json" data-cal-events set:html={JSON.stringify(calendarData)} />
+</section>
+
+<style>
+  .cal-section {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+    padding: 40px 0;
+  }
+  .cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .cal-section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--hero-text);
+  }
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .cal-nav-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 15%, transparent);
+    background: var(--hero-bg);
+    color: var(--hero-text);
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .cal-nav-btn:hover {
+    background: var(--color-ieee-blue);
+    color: white;
+    border-color: var(--color-ieee-blue);
+  }
+  .cal-month-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--hero-text);
+    min-width: 150px;
+    text-align: center;
+    text-transform: capitalize;
+  }
+
+  .cal-legend {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 14px;
+  }
+  .cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--hero-text-muted);
+  }
+  .cal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .cal-dot--upcoming {
+    background: var(--color-ieee-blue);
+  }
+  .cal-dot--past {
+    background: var(--color-slate-blue);
+  }
+
+  .cal-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .cal-weekdays span {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--hero-text-muted);
+    text-transform: uppercase;
+    padding: 4px 0;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  /* Cada celda de día (generada por JS) */
+  :global(.cal-day) {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 6px;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 8%, transparent);
+    font-size: 14px;
+    color: var(--hero-text);
+    position: relative;
+  }
+  :global(.cal-day--empty) {
+    border: none;
+  }
+  :global(.cal-day--today) {
+    border-color: var(--color-ieee-blue);
+    border-width: 2px;
+  }
+  /* Día con evento: clickeable */
+  :global(.cal-day--has-event) {
+    cursor: pointer;
+    font-weight: 700;
+    transition: background 0.2s ease;
+  }
+  :global(.cal-day--has-event:hover) {
+    background: color-mix(in srgb, var(--color-ieee-blue) 12%, transparent);
+  }
+  /* Puntos de evento bajo el número */
+  :global(.cal-event-dots) {
+    display: flex;
+    gap: 3px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  :global(.cal-event-dot) {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+  :global(.cal-event-dot--upcoming) {
+    background: var(--color-ieee-blue);
+  }
+  :global(.cal-event-dot--past) {
+    background: var(--color-slate-blue);
+  }
+
+  @media (max-width: 640px) {
+    :global(.cal-day) {
+      font-size: 12px;
+      padding: 3px;
+    }
+  }
+</style>
+
+<script>
+  // Leer los datos de eventos
+  const dataEl = document.querySelector("[data-cal-events]");
+  const events: { date: string; title: string; slug: string; isPast: boolean }[] =
+    dataEl ? JSON.parse(dataEl.textContent || "[]") : [];
+
+  const grid = document.querySelector<HTMLElement>("[data-cal-grid]");
+  const label = document.querySelector<HTMLElement>("[data-cal-label]");
+  const prevBtn = document.querySelector("[data-cal-prev]");
+  const nextBtn = document.querySelector("[data-cal-next]");
+
+  const monthNames = [
+    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+  ];
+
+  // Mes que se muestra actualmente (arranca en el mes actual)
+  let viewDate = new Date();
+  viewDate.setDate(1);
+
+  const sameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  const render = () => {
+    if (!grid || !label) return;
+    grid.innerHTML = "";
+
+    const year = viewDate.getFullYear();
+    const month = viewDate.getMonth();
+    label.textContent = `${monthNames[month]} ${year}`;
+
+    // Primer día del mes y con qué día de semana cae (lunes = 0)
+    const firstDay = new Date(year, month, 1);
+    let startWeekday = firstDay.getDay(); // 0=domingo
+    startWeekday = startWeekday === 0 ? 6 : startWeekday - 1; // ajustar a lunes=0
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+
+    // Celdas vacías antes del día 1
+    for (let i = 0; i < startWeekday; i++) {
+      const empty = document.createElement("div");
+      empty.className = "cal-day cal-day--empty";
+      grid.appendChild(empty);
+    }
+
+    // Días del mes
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cellDate = new Date(year, month, d);
+      const cell = document.createElement("div");
+      cell.className = "cal-day";
+
+      if (sameDay(cellDate, today)) cell.classList.add("cal-day--today");
+
+      const num = document.createElement("span");
+      num.textContent = String(d);
+      cell.appendChild(num);
+
+      // ¿Hay eventos este día?
+      const dayEvents = events.filter((e) => sameDay(new Date(e.date), cellDate));
+      if (dayEvents.length > 0) {
+        cell.classList.add("cal-day--has-event");
+
+        const dots = document.createElement("div");
+        dots.className = "cal-event-dots";
+        dayEvents.forEach((e) => {
+          const dot = document.createElement("span");
+          dot.className = `cal-event-dot ${e.isPast ? "cal-event-dot--past" : "cal-event-dot--upcoming"}`;
+          dots.appendChild(dot);
+        });
+        cell.appendChild(dots);
+
+        // Clic → va al evento (si hay varios, al primero)
+        cell.addEventListener("click", () => {
+          window.location.href = `/events/${dayEvents[0].slug}`;
+        });
+        cell.title = dayEvents.map((e) => e.title).join(", ");
+      }
+
+      grid.appendChild(cell);
+    }
+  };
+
+  prevBtn?.addEventListener("click", () => {
+    viewDate.setMonth(viewDate.getMonth() - 1);
+    render();
+  });
+  nextBtn?.addEventListener("click", () => {
+    viewDate.setMonth(viewDate.getMonth() + 1);
+    render();
+  });
+
+  render();
+</script>
