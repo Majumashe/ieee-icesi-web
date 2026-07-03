@@ -1,0 +1,409 @@
+---
+/**
+ * PÁGINA COMUNIDAD — /community
+ * Filtros (chips) arriba + secciones fijas abajo: Junta directiva,
+ * cada capítulo, cada comité. Una persona puede aparecer en varias
+ * secciones (según sus etiquetas) sin duplicar sus datos.
+ * Guardar como: src/pages/community.astro
+ * By: Majumashe - WebMaster 2026
+ */
+
+import Layout from "../layouts/Layout.astro";
+
+import AndySection from "../components/sections/AndySection.astro";
+import { Image } from "astro:assets";
+import { team, committees } from "../data/team";
+import { chapters } from "../data/chapters";
+
+// ── Construir las secciones a partir de las etiquetas ──
+// Junta directiva
+const boardPeople = team.filter((p) => p.board);
+
+// Capítulos: solo los que tienen al menos una persona
+const chapterSections = chapters
+  .map((ch) => ({
+    key: `chapter:${ch.slug}`,
+    title: ch.name,
+    subtitle: ch.fullName,
+    people: team.filter((p) => p.chapters?.includes(ch.slug)),
+  }))
+  .filter((s) => s.people.length > 0);
+
+// Comités: solo los que tienen al menos una persona
+const committeeSections = committees
+  .map((co) => ({
+    key: `committee:${co.slug}`,
+    title: co.name,
+    subtitle: "",
+    people: team.filter((p) => p.committees?.includes(co.slug)),
+  }))
+  .filter((s) => s.people.length > 0);
+
+// Todas las secciones en orden: Junta → capítulos → comités
+const sections = [
+  {
+    key: "board",
+    title: "Junta directiva",
+    subtitle: "Quienes lideran la rama",
+    people: boardPeople,
+  },
+  ...chapterSections,
+  ...committeeSections,
+];
+
+// Chips de filtro (uno por sección + "Todos")
+const filters = [
+  { key: "all", label: "Todos" },
+  ...sections.map((s) => ({ key: s.key, label: s.title })),
+];
+
+// Mapa de logos de capítulo para las esquinas de las fotos
+function chapterLogo(slug: string) {
+  const ch = chapters.find((c) => c.slug === slug);
+  return ch ? { src: ch.logo.src, name: ch.name } : null;
+}
+
+// ── Avatar de respaldo (cuando la persona no tiene foto) ──
+// Iniciales a partir del nombre.
+function initials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+}
+// Degradado estable por id (siempre el mismo color para la misma persona).
+const avatarColors = [
+  ["#00629b", "#01a499"],
+  ["#0118ab", "#005da4"],
+  ["#01a499", "#028473"],
+  ["#005da4", "#0118ab"],
+];
+function avatarGradient(id: string) {
+  let h = 0;
+  for (const c of id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return avatarColors[h % avatarColors.length];
+}
+---
+
+<Layout
+  title="Comunidad"
+  description="Conoce al equipo de la Rama Estudiantil IEEE de la Universidad ICESI: junta directiva, capítulos y comités."
+>
+  <!-- Hero: mosaico de Andy -->
+  <AndySection />
+
+  <!-- Filtros -->
+  <section class="cm-filters-wrap">
+    <div class="mx-auto max-w-screen-xl px-6 lg:px-12">
+      <div class="cm-filters" id="cm-filters">
+        {
+          filters.map((f, i) => (
+            <button class:list={["cm-filter", { "is-active": i === 0 }]} data-filter={f.key}>
+              {f.label}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Secciones -->
+  <div class="cm-sections">
+    {
+      sections.map((section) => (
+        <section class="cm-group" data-section={section.key}>
+          <div class="mx-auto max-w-screen-xl px-6 py-14 lg:px-12">
+            <div class="cm-group-head">
+              <div>
+                <h2 class="cm-group-title">{section.title}</h2>
+                {section.subtitle && <p class="cm-group-sub">{section.subtitle}</p>}
+              </div>
+              <span class="cm-count">{section.people.length}</span>
+            </div>
+
+            <div class="cm-grid">
+              {section.people.map((person) => (
+                <article class="cm-card">
+                  <div class="cm-photo">
+                    {person.photo ? (
+                      <Image
+                        src={person.photo}
+                        alt={person.name}
+                        width={360}
+                        height={480}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ) : (
+                      <div
+                        class="cm-avatar"
+                        style={`--a:${avatarGradient(person.id)[0]}; --b:${avatarGradient(person.id)[1]};`}
+                      >
+                        <span>{initials(person.name)}</span>
+                      </div>
+                    )}
+
+                    {person.chapters && person.chapters.length > 0 && (
+                      <span class="cm-badges">
+                        {person.chapters.map((slug) => {
+                          const logo = chapterLogo(slug);
+                          return logo ? (
+                            <span class="cm-badge" title={logo.name}>
+                              <img src={logo.src} alt={logo.name} />
+                            </span>
+                          ) : null;
+                        })}
+                      </span>
+                    )}
+                    {person.linkedin && (
+                      <a
+                        href={person.linkedin}
+                        class="cm-linkedin"
+                        target="_blank"
+                        rel="noopener"
+                        aria-label={`LinkedIn de ${person.name}`}
+                      >
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4V24h-4V8zm7.5 0h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-7.1c0-1.7-.03-3.9-2.37-3.9-2.37 0-2.73 1.85-2.73 3.77V24h-4V8z" />
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                  <h3 class="cm-name">{person.name}</h3>
+                  <p class="cm-role">{person.role}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Layout>
+
+<style>
+  .cm-filters-wrap,
+  .cm-sections {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+  }
+
+  /* Filtros (barra pegajosa con desenfoque) */
+  .cm-filters-wrap {
+    position: sticky;
+    top: 72px;
+    z-index: 20;
+    padding: 14px 0;
+    background-color: color-mix(in srgb, var(--hero-bg) 82%, transparent);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid color-mix(in srgb, var(--hero-text) 8%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--hero-text) 8%, transparent);
+  }
+  .cm-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  .cm-filter {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 15%, transparent);
+    background: transparent;
+    color: var(--hero-text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .cm-filter:hover {
+    border-color: var(--color-ieee-blue);
+    color: var(--hero-text);
+  }
+  .cm-filter.is-active {
+    background: var(--color-ieee-blue);
+    border-color: var(--color-ieee-blue);
+    color: white;
+  }
+
+  /* Encabezado de cada grupo */
+  .cm-group + .cm-group .cm-group-head {
+    border-top: 1px solid color-mix(in srgb, var(--hero-text) 8%, transparent);
+    padding-top: 34px;
+  }
+  .cm-group-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+  .cm-group-title {
+    font-size: clamp(20px, 2.5vw, 26px);
+    font-weight: 700;
+    color: var(--hero-text);
+  }
+  .cm-group-sub {
+    font-size: 15px;
+    color: var(--hero-text-muted);
+    margin-top: 4px;
+  }
+  .cm-count {
+    flex-shrink: 0;
+    min-width: 30px;
+    text-align: center;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-ieee-blue);
+    background: color-mix(in srgb, var(--color-ieee-blue) 12%, transparent);
+  }
+
+  /* Mosaico */
+  .cm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 26px;
+  }
+  .cm-card {
+    text-align: center;
+  }
+  .cm-photo {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: 18px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    background: color-mix(in srgb, var(--hero-text) 6%, transparent);
+    box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.5);
+    outline: 1px solid color-mix(in srgb, var(--hero-text) 8%, transparent);
+    outline-offset: -1px;
+    transition:
+      transform 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+  .cm-card:hover .cm-photo {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 38px -18px rgba(0, 98, 155, 0.55);
+  }
+  .cm-photo :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .cm-card:hover .cm-photo :global(img) {
+    transform: scale(1.05);
+  }
+
+  /* Avatar de respaldo (iniciales sobre degradado) */
+  .cm-avatar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(140deg, var(--a), var(--b));
+  }
+  .cm-avatar span {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: 1px;
+  }
+
+  /* Logos de capítulo (esquina) */
+  .cm-badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 4px;
+  }
+  .cm-badge {
+    display: flex;
+    padding: 5px 7px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+  .cm-badge img {
+    height: 16px;
+    width: auto;
+  }
+
+  /* LinkedIn (aparece al hover) */
+  .cm-linkedin {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: var(--color-ieee-blue);
+    color: white;
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.25s ease,
+      transform 0.25s ease;
+  }
+  .cm-card:hover .cm-linkedin {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .cm-linkedin svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .cm-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--hero-text);
+  }
+  .cm-role {
+    font-size: 13px;
+    color: var(--hero-text-muted);
+    margin-top: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cm-card:hover .cm-photo,
+    .cm-card:hover .cm-photo :global(img) {
+      transform: none;
+    }
+    .cm-linkedin {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  const filterBar = document.getElementById("cm-filters");
+  const sections = [...document.querySelectorAll<HTMLElement>("[data-section]")];
+
+  filterBar?.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLElement>(".cm-filter");
+    if (!btn) return;
+
+    // Marcar el chip activo
+    filterBar.querySelectorAll(".cm-filter").forEach((c) => c.classList.remove("is-active"));
+    btn.classList.add("is-active");
+
+    const filter = btn.dataset.filter || "all";
+
+    // Mostrar/ocultar secciones
+    sections.forEach((sec) => {
+      const show = filter === "all" || sec.dataset.section === filter;
+      sec.style.display = show ? "" : "none";
+    });
+  });
+</script>
