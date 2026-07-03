@@ -1,0 +1,1073 @@
+---
+/**
+ * PÁGINA CONTACTO — IEEE ICESI
+ * Hero con fondo Vanta HALO (consistente con /join-us) · datos de contacto ·
+ * formulario con validación nativa + envío progresivo · redes · mapa.
+ * Guardar como: src/pages/contact.astro  (URL: /contact)
+ *
+ * ─────────────────────────────────────────────────────────────
+ * CONFIGURACIÓN RÁPIDA (edita estas constantes):
+ *   CONTACT_EMAIL → correo real de la rama (también usado como fallback mailto)
+ *   FORM_ENDPOINT → endpoint del servicio de formularios (Formspree, Getform...)
+ *                   Si queda vacío, el formulario abre el correo del usuario (mailto).
+ * ─────────────────────────────────────────────────────────────
+ *
+ * By: Majumashe - WebMaster 2026
+ */
+
+import Layout from "../layouts/Layout.astro";
+import Button from "../components/ui/Button.astro";
+import { socialLinks } from "../data/social";
+
+// Íconos de redes (mismo patrón que Footer.astro)
+import instagramIcon from "../assets/icons/redes/instagram.svg";
+import facebookIcon from "../assets/icons/redes/facebook.svg";
+import linkedinIcon from "../assets/icons/redes/linkedin.svg";
+import spotifyIcon from "../assets/icons/redes/spotify.svg";
+import discordIcon from "../assets/icons/redes/discord.svg";
+
+const socialIcons = {
+  instagram: instagramIcon,
+  facebook: facebookIcon,
+  linkedin: linkedinIcon,
+  spotify: spotifyIcon,
+  discord: discordIcon,
+};
+
+// ── Configuración ──
+// Correo donde llegan los mensajes. IMPORTANTE: el destino real se define en tu
+// panel de Web3Forms (atado a la Access Key). Aquí solo se usa como fallback mailto.
+const CONTACT_EMAIL = "ieeeicesiwebsite@gmail.com";
+
+// Web3Forms — pega aquí tu Access Key (gratis, te llega al correo desde https://web3forms.com).
+// Mientras esté vacía, el formulario cae al modo mailto (abre el correo del usuario).
+const WEB3FORMS_ACCESS_KEY = "030360e8-b9ce-4470-b50b-2799c0345601";
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+
+// Anti-bots: usamos honeypot (campo oculto "botcheck", más abajo). Es invisible, gratis y
+// Web3Forms además filtra spam y limita por IP en su servidor. Frena a la mayoría de bots.
+// ¿Entró spam real algún día? La vía GRATIS es hCaptcha (Turnstile/reCAPTCHA son Pro):
+//   1) añade  <div class="h-captcha" data-captcha="true"></div>  antes del botón enviar,
+//   2) carga  <script src="https://web3forms.com/client/script.js" async defer></script>,
+//   3) actívalo en el dashboard de Web3Forms (menú CAPTCHA → hCaptcha).
+//   Nota: hCaptcha muestra una casita visible y a veces acertijos.
+
+// Adjuntos de archivos = función Pro (de pago) de Web3Forms.
+// Déjalo en false hasta activar la suscripción; con Pro, ponlo en true y el campo aparece.
+const ADJUNTOS_HABILITADOS = false;
+
+const MAPS_URL =
+  "https://www.google.com/maps/search/?api=1&query=Universidad+Icesi+Cali";
+
+// ── Motivos de contacto (para el <select> del formulario) ──
+const subjects = [
+  "Consulta general",
+  "Quiero unirme / membresía",
+  "Eventos y talleres",
+  "Capítulos y grupos",
+  "Alianzas y patrocinios",
+  "Prensa y comunicaciones",
+  "Otro",
+];
+
+// ── Vías de contacto directas (tarjetas) ──
+const channels = [
+  {
+    title: "Escríbenos",
+    text: CONTACT_EMAIL,
+    href: `mailto:${CONTACT_EMAIL}`,
+    icon: "mail",
+  },
+  {
+    title: "Visítanos",
+    text: "Universidad Icesi, Cali · Colombia",
+    href: MAPS_URL,
+    icon: "pin",
+  },
+  {
+    title: "Respondemos",
+    text: "En 1–3 días hábiles",
+    href: null,
+    icon: "clock",
+  },
+];
+---
+
+<Layout
+  title="Contacto"
+  description="¿Tienes preguntas sobre la Rama Estudiantil IEEE ICESI? Escríbenos: membresía, eventos, capítulos, alianzas o prensa. Estamos para ayudarte."
+>
+  <!-- ═══════════ HERO (fondo Vanta HALO) ═══════════ -->
+  <section class="contact-hero" id="vanta-hero">
+    <div class="relative z-10 mx-auto max-w-screen-xl px-6 py-20 lg:px-12 lg:py-28">
+      <div class="mx-auto max-w-3xl text-center">
+        <span class="contact-eyebrow">Contacto</span>
+        <h1 class="contact-h1">Hablemos.</h1>
+        <p class="contact-sub">
+          ¿Preguntas sobre la rama, un evento, una alianza o cómo unirte?
+          Escríbenos y te respondemos pronto.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CONTACTO: INFO + FORMULARIO ═══════════ -->
+  <section class="contact-section">
+    <div class="mx-auto max-w-screen-xl px-6 py-16 lg:px-12">
+      <div class="contact-layout">
+        <!-- ── Columna izquierda: vías directas + redes ── -->
+        <aside class="contact-aside">
+          <div class="mb-8 border-l-[3px] border-ieee-blue pl-3">
+            <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+              Otras vías
+            </span>
+          </div>
+
+          <ul class="channel-list">
+            {
+              channels.map((c) => {
+                const inner = (
+                  <>
+                    <span class="channel-icon">
+                      {c.icon === "mail" && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <rect x="3" y="5" width="18" height="14" rx="2" />
+                          <path d="m3 7 9 6 9-6" />
+                        </svg>
+                      )}
+                      {c.icon === "pin" && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                      )}
+                      {c.icon === "clock" && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <circle cx="12" cy="12" r="9" />
+                          <path d="M12 7v5l3 2" />
+                        </svg>
+                      )}
+                    </span>
+                    <span class="channel-body">
+                      <span class="channel-title">{c.title}</span>
+                      <span class="channel-text">{c.text}</span>
+                    </span>
+                  </>
+                );
+                return (
+                  <li>
+                    {c.href ? (
+                      <a
+                        href={c.href}
+                        class="channel"
+                        {...(c.href.startsWith("http")
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <div class="channel">{inner}</div>
+                    )}
+                  </li>
+                );
+              })
+            }
+          </ul>
+
+          <!-- Redes -->
+          <div class="mt-10 mb-4 border-l-[3px] border-ieee-blue pl-3">
+            <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+              Síguenos
+            </span>
+          </div>
+          <ul class="social-row">
+            {
+              socialLinks.map((social) => (
+                <li>
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.label}
+                    class="contact-social flex h-11 w-11 items-center justify-center rounded-lg"
+                  >
+                    <img
+                      src={socialIcons[social.icon].src}
+                      alt=""
+                      class="h-5 w-5"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </aside>
+
+        <!-- ── Columna derecha: formulario ── -->
+        <div class="contact-form-wrap">
+          <div class="mb-8 border-l-[3px] border-ieee-blue pl-3">
+            <span class="text-xs font-medium tracking-[1.5px] text-ieee-blue uppercase">
+              Envíanos un mensaje
+            </span>
+          </div>
+
+          <form
+            id="contact-form"
+            class="contact-form"
+            method="POST"
+            action={WEB3FORMS_ENDPOINT}
+            enctype="multipart/form-data"
+            data-access-key={WEB3FORMS_ACCESS_KEY}
+            data-email={CONTACT_EMAIL}
+            novalidate
+          >
+            <!-- Web3Forms: clave pública que enruta el mensaje a tu correo (destino fijado en su panel) -->
+            <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
+            <!-- Nombre del remitente que verás en el correo -->
+            <input type="hidden" name="from_name" value="Formulario web · IEEE ICESI" />
+
+            <!-- Honeypot anti-spam de Web3Forms (oculto para humanos, lo filtra su servidor) -->
+            <label class="hp" aria-hidden="true">
+              No llenar este campo
+              <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" />
+            </label>
+
+            <p class="form-note">
+              Los campos con <span class="req">*</span> son obligatorios.
+            </p>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="name">
+                  Nombre completo <span class="req" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autocomplete="name"
+                  required
+                  placeholder="Tu nombre"
+                />
+              </div>
+              <div class="field">
+                <label for="email">
+                  Correo <span class="req" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                  placeholder="tucorreo@icesi.edu.co"
+                />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="phone">
+                  Teléfono <span class="optional">(opcional)</span>
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  inputmode="tel"
+                  placeholder="+57 300 000 0000"
+                />
+              </div>
+              <div class="field">
+                <label for="subject">
+                  Motivo <span class="req" aria-hidden="true">*</span>
+                </label>
+                <div class="select-wrap">
+                  <select id="subject" name="subject" required>
+                    {subjects.map((s) => <option value={s}>{s}</option>)}
+                  </select>
+                  <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="message">
+                Mensaje <span class="req" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                required
+                placeholder="Cuéntanos en qué podemos ayudarte…"></textarea>
+            </div>
+
+            {
+              ADJUNTOS_HABILITADOS && (
+                <div class="field">
+                  <label for="attachment">
+                    Adjuntar archivos <span class="optional">(opcional)</span>
+                  </label>
+                  <label class="file-drop" for="attachment">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.49-8.49" />
+                    </svg>
+                    <span class="file-drop-text">Arrastra o haz clic para subir</span>
+                    <span class="file-drop-hint">Imágenes o documentos · máx. 5 MB c/u</span>
+                    <input
+                      id="attachment"
+                      name="attachment"
+                      type="file"
+                      multiple
+                      accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt"
+                    />
+                  </label>
+                  <ul id="file-list" class="file-list" aria-live="polite" />
+                </div>
+              )
+            }
+
+            <div class="form-footer">
+              <Button type="submit" variant="hero" class="w-full sm:w-auto">
+                Enviar mensaje
+              </Button>
+              <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+
+          <!-- Panel de éxito: reemplaza al formulario tras un envío correcto -->
+          <div id="form-success" class="form-success" role="status" aria-live="polite" hidden>
+            <div class="success-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+            </div>
+            <h3 class="success-title">¡Mensaje enviado!</h3>
+            <p class="success-text">
+              Gracias por escribirnos. Te responderemos a tu correo en 1–3 días hábiles.
+            </p>
+            <button type="button" id="send-another" class="success-again">
+              Enviar otro mensaje
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ MAPA ═══════════ -->
+  <section class="contact-section pb-16">
+    <div class="mx-auto max-w-screen-xl px-6 lg:px-12">
+      <div class="map-frame">
+        <iframe
+          title="Ubicación de la Universidad Icesi en el mapa"
+          src="https://www.google.com/maps?q=Universidad+Icesi+Cali&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<!-- ═══════════ Script de Vanta (solo esta página) ═══════════ -->
+<script>
+  const loadScript = (src: string) =>
+    new Promise<void>((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = () => resolve();
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+
+  const initVanta = async () => {
+    const el = document.getElementById("vanta-hero");
+    if (!el) return;
+    // Respeta a quien prefiere menos movimiento (y ahorra el peso)
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    try {
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js");
+      await loadScript("https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.halo.min.js");
+      // @ts-ignore — VANTA viene del script externo
+      window.VANTA.HALO({
+        el: "#vanta-hero",
+        baseColor: 0x00629b, // Azul IEEE
+        backgroundColor: 0x0e1113, // Gunmetal
+        amplitudeFactor: 1.6,
+        size: 1.5,
+        mouseControls: true,
+        touchControls: true,
+      });
+    } catch {
+      // Si falla el CDN, queda el fondo gunmetal de respaldo. Nada se rompe.
+    }
+  };
+
+  initVanta();
+</script>
+
+<!-- ═══════════ Envío del formulario (Web3Forms, progresivo) ═══════════ -->
+<script>
+  const form = document.getElementById("contact-form") as HTMLFormElement | null;
+  const status = document.getElementById("form-status");
+
+  if (form && status) {
+    const endpoint = form.action; // Web3Forms
+    const accessKey = form.dataset.accessKey || "";
+    const email = form.dataset.email || "";
+
+    const setStatus = (msg: string, type: "ok" | "error" | "") => {
+      status.textContent = msg;
+      status.dataset.state = type;
+    };
+
+    // ── Panel de éxito + confeti (mismo detalle que la página Únete) ──
+    const successPanel = document.getElementById("form-success");
+    const sendAnother = document.getElementById("send-another");
+
+    const loadConfetti = () =>
+      new Promise<void>((resolve, reject) => {
+        // @ts-ignore — confetti viene del script externo
+        if (window.confetti) return resolve();
+        const s = document.createElement("script");
+        s.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
+        s.onload = () => resolve();
+        s.onerror = reject;
+        document.head.appendChild(s);
+      });
+
+    const celebrate = async () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      try {
+        await loadConfetti();
+        // @ts-ignore — confetti viene del script externo
+        window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.7 } });
+      } catch {
+        // Si el confetti falla, el panel de éxito igual se muestra.
+      }
+    };
+
+    const showSuccess = () => {
+      form.hidden = true;
+      if (successPanel) successPanel.hidden = false;
+      successPanel?.scrollIntoView({ behavior: "smooth", block: "center" });
+      celebrate();
+    };
+
+    // "Enviar otro mensaje" → vuelve a mostrar el formulario limpio
+    sendAnother?.addEventListener("click", () => {
+      if (successPanel) successPanel.hidden = true;
+      form.hidden = false;
+      setStatus("", "");
+    });
+
+    // ── Adjuntos: previsualización, drag & drop y límite de tamaño ──
+    const MAX_FILE_MB = 5; // límite de Web3Forms por archivo
+    const fileInput = document.getElementById("attachment") as HTMLInputElement | null;
+    const fileList = document.getElementById("file-list");
+    const dropZone = fileInput?.closest(".file-drop") as HTMLElement | null;
+
+    const fmtSize = (bytes: number) => {
+      if (bytes < 1024) return `${bytes} B`;
+      if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    };
+
+    const oversizedFiles = () =>
+      Array.from(fileInput?.files ?? []).filter((f) => f.size > MAX_FILE_MB * 1024 * 1024);
+
+    const renderFiles = () => {
+      if (!fileInput || !fileList) return;
+      fileList.innerHTML = "";
+      Array.from(fileInput.files ?? []).forEach((file) => {
+        const tooBig = file.size > MAX_FILE_MB * 1024 * 1024;
+        const li = document.createElement("li");
+        li.className = "file-chip" + (tooBig ? " is-too-big" : "");
+        const name = document.createElement("span");
+        name.className = "file-name";
+        name.textContent = file.name;
+        const size = document.createElement("span");
+        size.className = "file-size";
+        size.textContent = tooBig ? `${fmtSize(file.size)} · supera 5 MB` : fmtSize(file.size);
+        li.append(name, size);
+        fileList.append(li);
+      });
+    };
+
+    fileInput?.addEventListener("change", renderFiles);
+
+    // Drag & drop sobre la zona
+    if (dropZone && fileInput) {
+      ["dragenter", "dragover"].forEach((ev) =>
+        dropZone.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dropZone.classList.add("is-dragover");
+        }),
+      );
+      ["dragleave", "drop"].forEach((ev) =>
+        dropZone.addEventListener(ev, (e) => {
+          e.preventDefault();
+          dropZone.classList.remove("is-dragover");
+        }),
+      );
+      dropZone.addEventListener("drop", (e) => {
+        const dt = (e as DragEvent).dataTransfer;
+        if (dt?.files?.length) {
+          fileInput.files = dt.files;
+          renderFiles();
+        }
+      });
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Honeypot: si el checkbox oculto viene marcado, es un bot → fingimos éxito sin enviar.
+      if ((form.elements.namedItem("botcheck") as HTMLInputElement)?.checked) {
+        setStatus("¡Gracias! Tu mensaje fue enviado.", "ok");
+        form.reset();
+        return;
+      }
+
+      // Validación nativa (novalidate está en el form para controlar el mensaje)
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        setStatus("Revisa los campos marcados antes de enviar.", "error");
+        return;
+      }
+
+      // Adjuntos que superan el límite de 5 MB → bloquea el envío
+      if (oversizedFiles().length) {
+        renderFiles();
+        setStatus(`Cada archivo debe pesar máximo ${MAX_FILE_MB} MB. Quita los marcados en rojo.`, "error");
+        return;
+      }
+
+      const data = new FormData(form);
+
+      // ── Sin Access Key configurada → fallback a mailto ──
+      if (!accessKey) {
+        const name = String(data.get("name") || "");
+        const from = String(data.get("email") || "");
+        const subject = String(data.get("subject") || "Consulta");
+        const message = String(data.get("message") || "");
+        const body = `Nombre: ${name}\nCorreo: ${from}\n\n${message}`;
+        window.location.href =
+          `mailto:${email}?subject=${encodeURIComponent(`[Web] ${subject}`)}` +
+          `&body=${encodeURIComponent(body)}`;
+        setStatus("Abrimos tu correo para enviar el mensaje.", "ok");
+        return;
+      }
+
+      // ── Envío por fetch a Web3Forms ──
+      const submitBtn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      if (submitBtn) submitBtn.disabled = true;
+      setStatus("Enviando…", "");
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: data,
+        });
+        const result = await res.json().catch(() => ({ success: res.ok }));
+
+        if (res.ok && result.success) {
+          form.reset();
+          renderFiles(); // limpia la lista de adjuntos mostrada
+          setStatus("", ""); // limpia cualquier estado previo
+          showSuccess();
+        } else {
+          throw new Error(result.message || "bad response");
+        }
+      } catch {
+        setStatus(
+          `No pudimos enviar el mensaje. Escríbenos directo a ${email}.`,
+          "error",
+        );
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .contact-section {
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
+  }
+
+  /* ═══ Hero con Vanta ═══ */
+  .contact-hero {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-gunmetal); /* respaldo mientras carga Vanta */
+  }
+  .contact-eyebrow {
+    display: inline-block;
+    margin-bottom: 18px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #5fe0d4;
+    background: rgba(1, 164, 153, 0.18);
+    border: 1px solid rgba(1, 164, 153, 0.4);
+  }
+  .contact-h1 {
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+    color: white;
+  }
+  .contact-sub {
+    font-size: 1.15rem;
+    line-height: 1.65;
+    max-width: 560px;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* ═══ Layout info + formulario ═══ */
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 56px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .contact-layout {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
+  /* ── Vías directas ── */
+  .channel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .channel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 12%, transparent);
+    background: color-mix(in srgb, var(--hero-text) 3%, transparent);
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  a.channel:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--color-ieee-blue) 45%, transparent);
+    box-shadow: 0 10px 26px -18px color-mix(in srgb, var(--color-ieee-blue) 80%, transparent);
+  }
+  .channel-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-ieee-blue);
+    background: color-mix(in srgb, var(--color-ieee-blue) 12%, transparent);
+  }
+  .channel-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .channel-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .channel-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-ieee-blue);
+  }
+  .channel-text {
+    font-size: 15px;
+    color: var(--hero-text);
+    overflow-wrap: anywhere;
+  }
+
+  /* ── Redes (adaptado del footer, sobre fondo claro) ── */
+  .social-row {
+    display: flex;
+    gap: 10px;
+  }
+  .contact-social {
+    background-color: color-mix(in srgb, var(--hero-text) 6%, transparent);
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease;
+  }
+  .contact-social img {
+    filter: brightness(0) saturate(100%);
+    opacity: 0.7;
+    transition:
+      filter 0.2s ease,
+      opacity 0.2s ease;
+  }
+  :global([data-theme="dark"]) .contact-social img {
+    filter: brightness(0) invert(0.85);
+  }
+  .contact-social:hover {
+    background-color: var(--color-ieee-blue);
+    transform: translateY(-2px);
+  }
+  .contact-social:hover img {
+    filter: brightness(0) invert(1);
+    opacity: 1;
+  }
+
+  /* ═══ Formulario ═══ */
+  .contact-form-wrap {
+    padding: 32px;
+    border-radius: 22px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 12%, transparent);
+    background: color-mix(in srgb, var(--hero-text) 3%, transparent);
+  }
+  @media (max-width: 480px) {
+    .contact-form-wrap {
+      padding: 22px;
+    }
+  }
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 560px) {
+    .field-row {
+      grid-template-columns: 1fr;
+    }
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--hero-text);
+  }
+  .field label .optional {
+    font-weight: 400;
+    font-size: 12px;
+    color: var(--hero-text-muted);
+  }
+  .field label .req {
+    color: var(--color-error);
+    font-weight: 700;
+  }
+  .form-note {
+    font-size: 12px;
+    color: var(--hero-text-muted);
+  }
+  .form-note .req {
+    color: var(--color-error);
+    font-weight: 700;
+  }
+  .field input,
+  .field textarea,
+  .field select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 11px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 16%, transparent);
+    background: var(--hero-bg);
+    color: var(--hero-text);
+    font-family: inherit;
+    font-size: 15px;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  .field input::placeholder,
+  .field textarea::placeholder {
+    color: var(--hero-text-muted);
+    opacity: 0.7;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--color-ieee-blue);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ieee-blue) 22%, transparent);
+  }
+  /* Marca el campo inválido solo tras interactuar */
+  .field input:user-invalid,
+  .field textarea:user-invalid,
+  .field select:user-invalid {
+    border-color: var(--color-error);
+  }
+
+  /* Select con chevron propio */
+  .select-wrap {
+    position: relative;
+  }
+  .select-wrap select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 40px;
+    cursor: pointer;
+  }
+  .select-chevron {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    width: 18px;
+    height: 18px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--hero-text-muted);
+  }
+
+  /* Honeypot: fuera de la vista sin usar display:none (los bots lo detectan) */
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* ═══ Campo de adjuntos (dropzone) ═══ */
+  .file-drop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 22px 16px;
+    border-radius: 12px;
+    border: 1.5px dashed color-mix(in srgb, var(--hero-text) 22%, transparent);
+    background: color-mix(in srgb, var(--hero-text) 2%, transparent);
+    text-align: center;
+    cursor: pointer;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .file-drop:hover,
+  .file-drop.is-dragover {
+    border-color: var(--color-ieee-blue);
+    background: color-mix(in srgb, var(--color-ieee-blue) 6%, transparent);
+  }
+  .file-drop svg {
+    width: 22px;
+    height: 22px;
+    color: var(--color-ieee-blue);
+    margin-bottom: 2px;
+  }
+  .file-drop-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--hero-text);
+  }
+  .file-drop-hint {
+    font-size: 12px;
+    color: var(--hero-text-muted);
+  }
+  /* Ocultamos el input nativo, pero accesible (la label lo activa) */
+  .file-drop input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  .file-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .file-list:empty {
+    margin-top: 0;
+  }
+  .file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    color: var(--hero-text);
+    background: color-mix(in srgb, var(--hero-text) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--hero-text) 10%, transparent);
+    max-width: 100%;
+  }
+  .file-chip.is-too-big {
+    color: var(--color-error);
+    border-color: color-mix(in srgb, var(--color-error) 45%, transparent);
+    background: color-mix(in srgb, var(--color-error) 8%, transparent);
+  }
+  .file-chip .file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
+  }
+  .file-chip .file-size {
+    flex-shrink: 0;
+    color: var(--hero-text-muted);
+  }
+
+  .form-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .form-status {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--hero-text-muted);
+  }
+  .form-status[data-state="ok"] {
+    color: var(--color-teal-surface);
+  }
+  .form-status[data-state="error"] {
+    color: var(--color-error);
+  }
+
+  /* ═══ Panel de éxito ═══ */
+  .form-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 24px 8px;
+    animation: success-in 0.4s ease both;
+  }
+  .success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    color: white;
+    background: linear-gradient(135deg, var(--color-teal), var(--color-teal-surface));
+    box-shadow: 0 12px 30px -10px color-mix(in srgb, var(--color-teal) 70%, transparent);
+    margin-bottom: 18px;
+    animation: success-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+  }
+  .success-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+  .success-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--hero-text);
+    margin-bottom: 8px;
+  }
+  .success-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--hero-text-muted);
+    max-width: 380px;
+    margin-bottom: 22px;
+  }
+  .success-again {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-ieee-blue);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 4px;
+    transition: color 0.2s ease;
+  }
+  .success-again:hover {
+    color: var(--color-icesi-blue);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  @keyframes success-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes success-pop {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .form-success,
+    .success-icon {
+      animation: none;
+    }
+  }
+
+  /* ═══ Mapa ═══ */
+  .map-frame {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 12%, transparent);
+    line-height: 0;
+  }
+  .map-frame iframe {
+    width: 100%;
+    height: 360px;
+    border: 0;
+  }
+  /* Suaviza el mapa en modo oscuro para que no deslumbre */
+  :global([data-theme="dark"]) .map-frame iframe {
+    filter: grayscale(0.3) brightness(0.9) contrast(0.95);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    a.channel:hover,
+    .contact-social:hover {
+      transform: none;
+    }
+  }
+</style>
