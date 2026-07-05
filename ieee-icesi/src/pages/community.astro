@@ -94,17 +94,38 @@ function avatarGradient(id: string) {
   <!-- Hero: mosaico de Andy -->
   <AndySection />
 
-  <!-- Filtros -->
-  <section class="cm-filters-wrap">
+  <!-- Buscador + Filtros -->
+  <section class="cm-controls">
     <div class="mx-auto max-w-screen-xl px-6 lg:px-12">
-      <div class="cm-filters" id="cm-filters">
-        {
-          filters.map((f, i) => (
-            <button class:list={["cm-filter", { "is-active": i === 0 }]} data-filter={f.key}>
-              {f.label}
-            </button>
-          ))
-        }
+      <div class="cm-controls-row">
+        <div class="cm-search">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="search"
+            id="cm-search"
+            placeholder="Buscar por nombre o rol…"
+            aria-label="Buscar personas"
+          />
+        </div>
+        <div class="cm-chips" id="cm-chips">
+          {
+            filters.map((f, i) => (
+              <button class:list={["cm-chip", { "is-active": i === 0 }]} data-filter={f.key}>
+                {f.label}
+              </button>
+            ))
+          }
+        </div>
       </div>
     </div>
   </section>
@@ -125,7 +146,11 @@ function avatarGradient(id: string) {
 
             <div class="cm-grid">
               {section.people.map((person) => (
-                <article class="cm-card">
+                <article
+                  class="cm-card"
+                  data-person
+                  data-search={`${person.name} ${person.role}`.toLowerCase()}
+                >
                   <div class="cm-photo">
                     {person.photo ? (
                       <Image
@@ -180,34 +205,73 @@ function avatarGradient(id: string) {
         </section>
       ))
     }
+
+    <div id="cm-empty" class="cm-empty" hidden>
+      No hay personas que coincidan con tu búsqueda.
+    </div>
   </div>
 </Layout>
 
 <style>
-  .cm-filters-wrap,
+  .cm-controls,
   .cm-sections {
     background-color: var(--hero-bg);
     transition: background-color 0.3s ease;
   }
 
-  /* Filtros (barra pegajosa con desenfoque) */
-  .cm-filters-wrap {
+  /* ===== Buscador + chips (mismo diseño que /events) ===== */
+  .cm-controls {
     position: sticky;
-    top: 72px;
-    z-index: 20;
-    padding: 14px 0;
-    background-color: color-mix(in srgb, var(--hero-bg) 82%, transparent);
+    /* Igual que en eventos: el JS mide el header real y lo expone en la var. */
+    top: var(--ev-sticky-top, 110px);
+    z-index: 30;
+    padding: 16px 0;
     backdrop-filter: blur(10px);
-    border-top: 1px solid color-mix(in srgb, var(--hero-text) 8%, transparent);
-    border-bottom: 1px solid color-mix(in srgb, var(--hero-text) 8%, transparent);
+    background-color: var(--hero-bg);
   }
-  .cm-filters {
+  .cm-controls-row {
     display: flex;
+    gap: 14px;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 9px;
+    padding: 4px 0;
   }
-  .cm-filter {
-    padding: 8px 16px;
+  .cm-search {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+    max-width: 400px;
+  }
+  .cm-search svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--hero-text-muted);
+  }
+  .cm-search input {
+    width: 100%;
+    padding: 11px 14px 11px 40px;
+    border: 1px solid color-mix(in srgb, var(--hero-text) 15%, transparent);
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--hero-bg);
+    color: var(--hero-text);
+    outline: none;
+  }
+  .cm-search input:focus {
+    border-color: var(--color-ieee-blue);
+  }
+  .cm-chips {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .cm-chip {
+    padding: 8px 14px;
     border-radius: 999px;
     border: 1px solid color-mix(in srgb, var(--hero-text) 15%, transparent);
     background: transparent;
@@ -218,14 +282,25 @@ function avatarGradient(id: string) {
     cursor: pointer;
     transition: all 0.2s ease;
   }
-  .cm-filter:hover {
+  .cm-chip:hover {
     border-color: var(--color-ieee-blue);
-    color: var(--hero-text);
   }
-  .cm-filter.is-active {
+  .cm-chip.is-active {
     background: var(--color-ieee-blue);
     border-color: var(--color-ieee-blue);
     color: white;
+  }
+
+  /* Mensaje vacío (mismo estilo que /events) */
+  .cm-empty {
+    max-width: 1280px;
+    margin: 0 auto 60px;
+    padding: 40px;
+    text-align: center;
+    color: var(--hero-text-muted);
+    font-size: 14px;
+    border: 1px dashed color-mix(in srgb, var(--hero-text) 20%, transparent);
+    border-radius: 14px;
   }
 
   /* Encabezado de cada grupo */
@@ -387,23 +462,62 @@ function avatarGradient(id: string) {
 </style>
 
 <script>
-  const filterBar = document.getElementById("cm-filters");
+  const search = document.getElementById("cm-search") as HTMLInputElement | null;
+  const chipsBox = document.getElementById("cm-chips");
   const sections = [...document.querySelectorAll<HTMLElement>("[data-section]")];
+  const empty = document.getElementById("cm-empty");
 
-  filterBar?.addEventListener("click", (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLElement>(".cm-filter");
-    if (!btn) return;
+  let activeFilter = "all";
+  let query = "";
 
-    // Marcar el chip activo
-    filterBar.querySelectorAll(".cm-filter").forEach((c) => c.classList.remove("is-active"));
-    btn.classList.add("is-active");
+  const applyFilters = () => {
+    let visibleCount = 0;
 
-    const filter = btn.dataset.filter || "all";
-
-    // Mostrar/ocultar secciones
     sections.forEach((sec) => {
-      const show = filter === "all" || sec.dataset.section === filter;
-      sec.style.display = show ? "" : "none";
+      // ¿La sección entra por el chip activo?
+      const matchesChip = activeFilter === "all" || sec.dataset.section === activeFilter;
+
+      // Filtrar personas por búsqueda dentro de la sección
+      let sectionVisible = 0;
+      sec.querySelectorAll<HTMLElement>("[data-person]").forEach((card) => {
+        const text = card.dataset.search || "";
+        const show = matchesChip && (query === "" || text.includes(query));
+        card.style.display = show ? "" : "none";
+        if (show) sectionVisible++;
+      });
+
+      // La sección se muestra solo si tiene alguien visible
+      sec.style.display = sectionVisible > 0 ? "" : "none";
+      visibleCount += sectionVisible;
     });
+
+    if (empty) empty.hidden = visibleCount > 0;
+  };
+
+  search?.addEventListener("input", () => {
+    query = search.value.trim().toLowerCase();
+    applyFilters();
   });
+
+  chipsBox?.addEventListener("click", (e) => {
+    const chip = (e.target as HTMLElement).closest<HTMLElement>(".cm-chip");
+    if (!chip) return;
+    chipsBox.querySelectorAll(".cm-chip").forEach((c) => c.classList.remove("is-active"));
+    chip.classList.add("is-active");
+    activeFilter = chip.dataset.filter || "all";
+    applyFilters();
+  });
+
+  // === Offset sticky del buscador = altura real del header (igual que /events) ===
+  const mainHeader = document.getElementById("main-header");
+  const updateStickyTop = () => {
+    if (!mainHeader) return;
+    const h = Math.round(mainHeader.getBoundingClientRect().height);
+    document.documentElement.style.setProperty("--ev-sticky-top", `${h}px`);
+  };
+  updateStickyTop();
+  window.addEventListener("resize", updateStickyTop, { passive: true });
+  if (mainHeader && "ResizeObserver" in window) {
+    new ResizeObserver(updateStickyTop).observe(mainHeader);
+  }
 </script>

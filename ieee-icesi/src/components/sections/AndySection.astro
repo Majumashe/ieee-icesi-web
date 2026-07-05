@@ -1,98 +1,276 @@
 ---
 /**
- * ANDY SECTION — IEEE ICESI
- * Mosaico alternado a TODO EL ANCHO (edge-to-edge), sin espacios entre cuadros.
- * Se intercalan cuadros con imagen de Andy y cuadros de color con texto corto.
- * El encabezado respeta el tema; los cuadros de color son de marca (fijos).
- *
- * ─────────────────────────────────────────────────────────────
- * IMÁGENES DE ANDY (van en public/andy/):
- *   - andy-proyectos.png · andy-eventos.png · andy-comunidad.png
- * ─────────────────────────────────────────────────────────────
+ * ANDY SECTION — HERO CON CONFETI · IEEE ICESI
+ * Hero de altura acotada: las 3 fotos de Andy como tarjetas INTERACTIVAS
+ * (al pasar el cursor / enfocar se enderezan, crecen y revelan su frase),
+ * con lluvia de confeti de fondo y título superpuesto.
+ * Movimiento 100% CSS. Respeta prefers-reduced-motion.
  *
  * By: Majumashe - WebMaster 2026
  */
 
-const cells = [
-  { type: "img", img: "/andy/andy-proyectos.png", alt: "Andy soldando en el taller" },
-  { type: "text", text: "Construimos cosas reales", bg: "var(--color-ieee-blue)" },
-  { type: "img", img: "/andy/andy-eventos.png", alt: "Andy presentando con micrófono" },
-  { type: "text", text: "Vivimos la ingeniería", bg: "var(--color-teal)" },
-  { type: "img", img: "/andy/andy-comunidad.png", alt: "Andy celebrando con la comunidad" },
-  { type: "text", text: "Somos una familia", bg: "var(--color-icesi-deep)" },
+// Las 3 fotos, cada una con su frase (antes eran recuadros de color).
+const slides = [
+  {
+    img: "/andy/andy-proyectos.png",
+    alt: "Andy soldando en el taller",
+    text: "Construimos cosas reales",
+    accent: "var(--color-ieee-blue)",
+  },
+  {
+    img: "/andy/andy-eventos.png",
+    alt: "Andy presentando con micrófono",
+    text: "Vivimos la ingeniería",
+    accent: "var(--color-teal)",
+  },
+  {
+    img: "/andy/andy-comunidad.png",
+    alt: "Andy celebrando con la comunidad",
+    text: "Somos una familia",
+    accent: "var(--color-icesi-deep)",
+  },
 ];
+
+// Confeti: piezas generadas con variedad de color, tamaño, posición y tiempo.
+const confettiColors = [
+  "#00629b",
+  "#01a499",
+  "#0118ab",
+  "#f4b400",
+  "#f44336",
+  "#2ecc71",
+  "#ffffff",
+];
+const confetti = Array.from({ length: 56 }, (_, i) => {
+  const size = 6 + Math.round(Math.random() * 8);
+  const isCircle = Math.random() > 0.55;
+  return {
+    x: +(Math.random() * 100).toFixed(2),
+    w: size,
+    h: isCircle ? size : Math.round(size * 1.6),
+    br: isCircle ? "50%" : "2px",
+    color: confettiColors[i % confettiColors.length],
+    duration: +(3.2 + Math.random() * 4).toFixed(2),
+    delay: +(Math.random() * 6).toFixed(2),
+  };
+});
 ---
 
-<section class="andy-section">
-  <!-- Mosaico edge-to-edge, sin espacios -->
-  <div class="andy-mosaic">
+<section class="andy-hero" aria-label="Nuestra comunidad">
+  <!-- Lluvia de confeti -->
+  <div class="confetti" aria-hidden="true">
     {
-      cells.map((cell) =>
-        cell.type === "img" ? (
-          <div class="andy-cell andy-cell--img">
-            <img src={cell.img} alt={cell.alt} loading="lazy" decoding="async" />
-          </div>
-        ) : (
-          <div class="andy-cell andy-cell--text" style={`background:${cell.bg}`}>
-            <span>{cell.text}</span>
-          </div>
-        ),
-      )
+      confetti.map((c) => (
+        <i
+          style={`--x:${c.x}%; --w:${c.w}px; --h:${c.h}px; --c:${c.color}; --br:${c.br}; --d:${c.duration}s; --delay:${c.delay}s;`}
+        />
+      ))
     }
+  </div>
+
+  <!-- Contenido -->
+  <div class="andy-inner">
+    <div class="andy-head">
+      <div class="andy-kicker">Nuestra comunidad</div>
+      <h1 class="andy-title">La familia IEEE ICESI</h1>
+      <p class="andy-sub">Pasa el cursor sobre Andy y descubre lo que somos.</p>
+    </div>
+
+    <div class="andy-cards">
+      {
+        slides.map((s) => (
+          <button type="button" class="andy-card" style={`--accent:${s.accent}`}>
+            <img src={s.img} alt={s.alt} loading="eager" decoding="async" />
+            <span class="andy-card-label">{s.text}</span>
+          </button>
+        ))
+      }
+    </div>
   </div>
 </section>
 
 <style>
-  /* Tablero 3 columnas, a todo el ancho, SIN gap */
-  .andy-mosaic {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0;
-    width: 100%;
-  }
-
-  .andy-cell {
-    aspect-ratio: 1;
+  .andy-hero {
+    position: relative;
+    height: clamp(460px, 66vh, 600px);
     overflow: hidden;
+    background-color: var(--hero-bg);
+    transition: background-color 0.3s ease;
   }
 
-  /* Celda de imagen */
-  .andy-cell--img img {
-    display: block;
-    width: 100%;
+  /* ── Contenido ── */
+  .andy-inner {
+    position: relative;
+    z-index: 2;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s ease;
-  }
-  .andy-cell--img:hover img {
-    transform: scale(1.05);
-  }
-
-  /* Celda de color con texto corto */
-  .andy-cell--text {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: clamp(20px, 4vh, 40px);
     padding: 24px;
     text-align: center;
   }
-  .andy-cell--text span {
-    color: white;
-    font-size: clamp(20px, 2.4vw, 30px);
+  .andy-kicker {
+    font-size: 12px;
     font-weight: 700;
-    line-height: 1.2;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-ieee-blue);
+    margin-bottom: 10px;
+  }
+  .andy-title {
+    font-size: clamp(2rem, 5.5vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--hero-text);
+  }
+  .andy-sub {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: var(--hero-text-muted);
   }
 
-  /* Responsive: en móvil, 2 columnas */
-  @media (max-width: 767px) {
-    .andy-mosaic {
-      grid-template-columns: repeat(2, 1fr);
+  /* ── Tarjetas interactivas ── */
+  .andy-cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(10px, 2vw, 26px);
+  }
+  .andy-card {
+    position: relative;
+    width: clamp(112px, 22vw, 240px);
+    aspect-ratio: 3 / 4;
+    border: 0;
+    padding: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    background: color-mix(in srgb, var(--hero-text) 6%, transparent);
+    box-shadow: 0 16px 34px -18px rgba(0, 0, 0, 0.5);
+    transform: rotate(var(--rot, 0deg));
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.35s ease;
+  }
+  .andy-card:nth-child(1) { --rot: -6deg; }
+  .andy-card:nth-child(2) { --rot: 0deg; z-index: 2; }
+  .andy-card:nth-child(3) { --rot: 6deg; }
+
+  .andy-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s ease;
+  }
+
+  /* Velo con el color de acento (aparece al interactuar) */
+  .andy-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--accent) 92%, transparent),
+      transparent 58%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .andy-card-label {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 2;
+    padding: 16px 14px;
+    color: #fff;
+    font-weight: 700;
+    font-size: clamp(13px, 1.5vw, 18px);
+    line-height: 1.2;
+    transform: translateY(14px);
+    opacity: 0;
+    transition:
+      transform 0.35s ease,
+      opacity 0.35s ease;
+  }
+
+  /* Estado interactivo: se endereza, crece, sube al frente y revela la frase */
+  .andy-card:hover,
+  .andy-card:focus-visible {
+    transform: rotate(0deg) translateY(-10px) scale(1.05);
+    box-shadow: 0 28px 50px -18px rgba(0, 98, 155, 0.6);
+    z-index: 5;
+    outline: none;
+  }
+  .andy-card:hover img,
+  .andy-card:focus-visible img {
+    transform: scale(1.06);
+  }
+  .andy-card:hover::after,
+  .andy-card:focus-visible::after {
+    opacity: 1;
+  }
+  .andy-card:hover .andy-card-label,
+  .andy-card:focus-visible .andy-card-label {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* ── Confeti ── */
+  .confetti {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .confetti i {
+    position: absolute;
+    top: -24px;
+    left: var(--x);
+    width: var(--w);
+    height: var(--h);
+    background: var(--c);
+    border-radius: var(--br);
+    opacity: 0;
+    animation: confetti-fall var(--d) linear var(--delay) infinite;
+  }
+  @keyframes confetti-fall {
+    0% {
+      transform: translateY(-10px) rotate(0deg);
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    92% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(640px) rotate(720deg);
+      opacity: 0;
     }
   }
 
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .andy-cards {
+      gap: 8px;
+    }
+  }
+
+  /* ── Accesibilidad: sin movimiento si el usuario lo pide ── */
   @media (prefers-reduced-motion: reduce) {
-    .andy-cell--img:hover img {
-      transform: none;
+    .confetti {
+      display: none;
+    }
+    .andy-card,
+    .andy-card img,
+    .andy-card-label,
+    .andy-card::after {
+      transition: none;
     }
   }
 </style>
